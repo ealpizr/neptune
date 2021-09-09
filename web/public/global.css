@@ -1,0 +1,39 @@
+:root {
+  --clr-primary: #141821;
+  --clr-secondary: #3f4447;
+  --clr-accent-blue: #0077b6;
+  --clr-accent-red: #ef233c;
+  --clr-std: #fff;
+
+  --clr-bg-400: #232a38;
+  --clr-bg-600: #1a1f2b;
+
+  --ff-main: 'Roboto', sans-serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: var(--ff-main);
+}
+
+h1,
+h2,
+h3,
+p,
+a,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.text-center {
+  text-align: center;
+}
