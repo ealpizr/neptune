@@ -1,4 +1,5 @@
 <script>
+import ChatContactInfo from "./components/ChatContactInfo.svelte";
 import Sidebar from "./components/Sidebar.svelte";
 </script>
 
@@ -7,7 +8,9 @@ import Sidebar from "./components/Sidebar.svelte";
   <Sidebar />
 
   <main class="main">
-    <div class="main--contactinfo"></div>
+
+    <ChatContactInfo />
+
     <div class="main--chat"></div>
     <div class="main--input">
       <input type="text" placeholder="Type a message...">
@@ -35,12 +38,6 @@ import Sidebar from "./components/Sidebar.svelte";
     flex-direction: column;
   }
 
-  .main--contactinfo {
-    background-color: #232A38;
-    width: 100%;
-    height: 10%;
-  }
-
   .main--chat {
     height: 100%;
   }
@@ -51,7 +48,7 @@ import Sidebar from "./components/Sidebar.svelte";
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 0 3em;
+    padding: 4em 3em;
   }
 
   .main--input input {
@@ -69,7 +66,7 @@ import Sidebar from "./components/Sidebar.svelte";
 
 
   .test {
-    width: 8%;
+    width: 80px;
     height: 35px;
     background-color: #3F4447;
     display: flex;
