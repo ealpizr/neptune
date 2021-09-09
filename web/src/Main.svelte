@@ -1,5 +1,6 @@
 <script>
 import ChatContactInfo from "./components/ChatContactInfo.svelte";
+import ChatMessage from "./components/ChatMessage.svelte";
 import Sidebar from "./components/Sidebar.svelte";
 </script>
 
@@ -11,7 +12,14 @@ import Sidebar from "./components/Sidebar.svelte";
 
     <ChatContactInfo />
 
-    <div class="main--chat"></div>
+    <div class="main--chat">
+      <!-- TODO: custom scroll -->
+      <ChatMessage Type="sent" />
+      <ChatMessage Type="received"/>
+      <ChatMessage Type="sent"/>
+      <ChatMessage Type="received"/>
+    </div>
+
     <div class="main--input">
       <input type="text" placeholder="Type a message...">
       <div class="test">
@@ -40,6 +48,10 @@ import Sidebar from "./components/Sidebar.svelte";
 
   .main--chat {
     height: 100%;
+    padding: 3em;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
   }
 
   .main--input {
