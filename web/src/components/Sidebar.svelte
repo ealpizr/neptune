@@ -25,6 +25,7 @@ export let FullScreen = false
 
   .sidebar {
     width: 30%;
+    min-width: 350px;
   }
 
   @media screen and (max-width: 768px) {

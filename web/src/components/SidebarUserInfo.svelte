@@ -1,6 +1,9 @@
 <div class="sidebar--userinfo">
-  <img src="/img1.png" />
-  <h2>John Doe</h2>
+  <div class="close-icon-container"><span class="close-icon"></span></div>
+  <div class="userinfo-container">
+    <img src="/img1.png" />
+    <h2>John Doe</h2>
+  </div>
   <div class="icon-container">
     <span class="logout-icon"></span>
   </div>
@@ -14,7 +17,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: stretch;
+    justify-content: space-between;
   } 
 
   .sidebar--userinfo img {
@@ -25,20 +28,26 @@
 
   .sidebar--userinfo h2 {
     color: white;
-    flex: 1;
-    width: 100%;
     font-size: 1.8rem;
   }
 
+  .userinfo-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
   .sidebar--userinfo .icon-container {
-    width: 20%;
+    width: 30px;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 2em;
   }
 
-  .sidebar--userinfo span {
+  .logout-icon {
     width: 100%;
     height: 100%;
     max-width: 30px;
@@ -47,5 +56,32 @@
     background-repeat: no-repeat;
     background-size: contain;
     cursor: pointer;
+  }
+
+  .close-icon-container {
+    display: none;
+    margin-left: 2em;
+    width: 30px;
+    height: 100%;
+  }
+
+  .close-icon {
+    display: block;
+    background-image: url("/close-icon.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 768px) {
+    .close-icon-container {
+      display: block;
+    }
+
+    .userinfo-container {
+      align-self: center;
+    }
   }
 </style>
