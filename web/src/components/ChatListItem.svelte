@@ -50,5 +50,11 @@
     font-size: 1rem;
     margin: 1.8em 1em 0;
   }
+
+  @media screen and (max-width: 768px) {
+    .container {
+      height: 100px;
+    }
+  }
   
 </style>

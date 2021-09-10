@@ -2,15 +2,18 @@
 import ChatContactInfo from "./components/ChatContactInfo.svelte";
 import ChatMessage from "./components/ChatMessage.svelte";
 import Sidebar from "./components/Sidebar.svelte";
+
+let isMenuOpened = false
+
 </script>
 
 <div class="wrapper">
 
-  <Sidebar />
+  <Sidebar FullScreen={isMenuOpened} />
 
   <main class="main">
 
-    <ChatContactInfo />
+    <ChatContactInfo on:openMenu={e => isMenuOpened = true}/>
 
     <div class="main--chat">
       <!-- TODO: custom scroll -->

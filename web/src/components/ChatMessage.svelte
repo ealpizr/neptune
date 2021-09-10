@@ -48,4 +48,11 @@
     font-size: 1.2rem;
     margin-bottom: 1em;
   }
+
+  @media screen and (max-width: 768px) {
+    .message {
+      width: 70%;
+    }
+  }
+
 </style>
