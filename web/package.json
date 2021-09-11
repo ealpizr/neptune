@@ -18,6 +18,8 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "google-protobuf": "^3.18.0-rc.2",
+    "grpc-web": "^1.2.1",
     "sirv-cli": "^1.0.0"
   }
 }

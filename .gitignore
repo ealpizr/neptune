@@ -1,2 +1,4 @@
-/web/node_modules/
-/web/public/build/
+web/node_modules/
+web/public/build/
+
+server/neptune

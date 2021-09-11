@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "neptune/proto";
+
+package neptune;
+
+message GreetingResponse {
+  string message = 1;
+}
+
+message GreetingRequest {
+  string name = 1;
+}
+
+service Greeter {
+  rpc GreetMe(GreetingRequest) returns (GreetingResponse) {}
+}

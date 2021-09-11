@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  frontend:
+    build:
+      context: web
+    ports:
+      - 80:5000
+    volumes:
+      - ./web:/app
+    command: yarn dev
+
+  backend:
+    build:
+      context: server
+    ports:
+      - 3001:3001
+    networks:
+      default:
+        aliases:
+          - grpc-server
+    volumes:
+      - ./server:/svr
+    command: CompileDaemon -build="go build -o neptune ./src" -command="./neptune"
+
+  proxy:
+    image: envoyproxy/envoy-alpine:v1.18.4
+    volumes:
+      - ./envoy.yaml:/envoy.yaml
+    ports:
+      - 3000:3000
+    command: envoy -c envoy.yaml
+
+networks:
+  default:
