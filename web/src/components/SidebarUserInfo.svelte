@@ -88,5 +88,10 @@
     .userinfo-container {
       align-self: center;
     }
+
+    .sidebar--userinfo img {
+      margin: 0;
+      margin-right: 1em;
+    }
   }
 </style>
