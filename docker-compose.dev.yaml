@@ -6,6 +6,7 @@ services:
       context: web
     ports:
       - 80:5000
+      - 35729:35729
     volumes:
       - ./web:/app
     command: yarn dev
