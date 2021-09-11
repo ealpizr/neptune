@@ -7,7 +7,7 @@ export let FullScreen = false
 </script>
 
 <section class="{FullScreen ? "sidebar--fullscreen" : "sidebar"}">
-  <SidebarUserInfo />
+  <SidebarUserInfo on:closeMenu />
   <SidebarChatList />
 </section>
 

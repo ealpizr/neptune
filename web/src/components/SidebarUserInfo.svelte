@@ -1,5 +1,10 @@
+<script>
+  import {createEventDispatcher} from 'svelte'
+  const dispatch = createEventDispatcher()
+</script>
+
 <div class="sidebar--userinfo">
-  <div class="close-icon-container"><span class="close-icon"></span></div>
+  <div class="close-icon-container"><span class="close-icon" on:click={() => dispatch("closeMenu")}></span></div>
   <div class="userinfo-container">
     <img src="/img1.png" />
     <h2>John Doe</h2>

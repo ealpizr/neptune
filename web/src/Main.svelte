@@ -9,7 +9,7 @@ let isMenuOpened = false
 
 <div class="wrapper">
 
-  <Sidebar FullScreen={isMenuOpened} />
+  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} />
 
   <main class="main">
 
