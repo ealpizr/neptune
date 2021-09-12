@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "neptune/proto";
+
+package neptune;
+
+service Auth {
+  rpc SignUp(SignUpRequest) returns (SignUpResponse) {}
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+}
+
+message SignUpRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+
+}
+
+message SignUpResponse {
+  string message = 1;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string accessToken = 1;
+  string refreshToken = 2;
+}

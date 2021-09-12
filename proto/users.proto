@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "neptune/proto";
+import "google/protobuf/empty.proto";
+
+package neptune;
+
+service Users {
+  rpc GetMyUser(google.protobuf.Empty) returns (MyUserResponse) {}
+}
+
+message MyUserResponse {
+  string email = 1;
+  string username = 2;
+}

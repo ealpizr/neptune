@@ -1,16 +1,26 @@
 <script>
   import {createEventDispatcher} from 'svelte'
+  import {useNavigate} from 'svelte-navigator'
+
   const dispatch = createEventDispatcher()
+  const navigate = useNavigate()
+
+  const Logout = () => {
+    window.localStorage.removeItem("refreshToken")
+    navigate("/login")
+  }
+
+  export let username
 </script>
 
 <div class="sidebar--userinfo">
   <div class="close-icon-container"><span class="close-icon" on:click={() => dispatch("closeMenu")}></span></div>
   <div class="userinfo-container">
     <img src="/img1.png" />
-    <h2>John Doe</h2>
+    <h2>{username}</h2>
   </div>
   <div class="icon-container">
-    <span class="logout-icon"></span>
+    <span on:click={Logout} class="logout-icon"></span>
   </div>
 </div> 
 
@@ -32,6 +42,7 @@
   }
 
   .sidebar--userinfo h2 {
+    outline: none;
     color: white;
     font-size: 1.8rem;
   }

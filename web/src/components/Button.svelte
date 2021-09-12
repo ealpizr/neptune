@@ -2,7 +2,7 @@
   export let Text
 </script>
 
-<input type="submit" value={Text}>
+<input type="submit" value={Text} on:click>
 
 <style>
   input {

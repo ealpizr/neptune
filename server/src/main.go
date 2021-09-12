@@ -1,36 +1,34 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
-	p "neptune/proto"
+	"neptune/src/database"
+	"neptune/src/interceptors"
+	"neptune/src/models"
+	"neptune/src/services"
 	"net"
 
 	"google.golang.org/grpc"
 )
 
-type Server struct {
-	p.UnimplementedGreeterServer
-}
-
-func (s *Server) GreetMe(ctx context.Context, req *p.GreetingRequest) (*p.GreetingResponse, error) {
-	return &p.GreetingResponse{Message: fmt.Sprintf("Hello '%s' from GO!", req.Name)}, nil
-}
-
 func main() {
+	serverOpts := []grpc.ServerOption{
+		grpc.UnaryInterceptor(interceptors.AuthRequired),
+	}
+
+	s := models.NewServer(serverOpts)
+	s.DB = database.Connect("mongodb+srv://mongo:mongo@cluster0.arf9f.mongodb.net", "neptune")
+
+	services.RegisterAuthService(s)
+	services.RegisterUsersService(s)
+
 	lis, err := net.Listen("tcp", ":3001")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	s := Server{}
-	grpcServer := grpc.NewServer()
-	p.RegisterGreeterServer(grpcServer, &s)
-
 	log.Println("starting grpc server")
-	if err := grpcServer.Serve(lis); err != nil {
+	if err := s.Server.Serve(lis); err != nil {
 		log.Fatal(err)
 	}
-
 }
