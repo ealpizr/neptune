@@ -1,8 +1,12 @@
+<script>
+  export let chat
+</script>
+
 <div class="container">
   <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture">
   <div class="chatinfo-container">
-    <h3 class="contact-name">Jane Doe</h3>
-    <p class="message-content">Lorem ipsum dolor sit amet, consectetur</p>
+    <h3 class="contact-name">{chat?.user}</h3>
+    <p class="message-content">{chat?.message.content}</p>
   </div>
   <p class="message-time">10:54</p>
 </div>

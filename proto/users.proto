@@ -10,6 +10,7 @@ service Users {
 }
 
 message MyUserResponse {
-  string email = 1;
-  string username = 2;
+  string ID = 1;
+  string Email = 2;
+  string Username = 3;
 }

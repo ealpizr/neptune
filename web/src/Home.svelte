@@ -2,32 +2,36 @@
 import ChatContactInfo from "./components/ChatContactInfo.svelte";
 import ChatMessage from "./components/ChatMessage.svelte";
 import Sidebar from "./components/Sidebar.svelte";
+import {onMount} from 'svelte'
 import {useNavigate} from "svelte-navigator"
-import {UsersClient} from './proto/users_grpc_web_pb'
+import {getCurrentUser} from './controllers/users'
+import {getChats} from './controllers/chats'
 
 const navigate = useNavigate()
 let isMenuOpened = false
 let refreshToken = window.localStorage.getItem("refreshToken")
 let accessToken = window.sessionStorage.getItem("accessToken")
-let userData = {}
+let user = {}
+let chats = []
 
-if (!refreshToken) {
-  navigate("/login")
-} else {
-  const client = new UsersClient("http://192.168.1.190:3000")
-  client.getMyUser(new proto.google.protobuf.Empty(), {"authorization": accessToken}, (err, res) => {
-    if (err) {
-      return console.log(err)
-    }
-    userData = res.toObject()
-  })
-}
+
+onMount(async () => {
+  if (!refreshToken) {
+    return navigate("/login")
+  } 
+
+  user = await getCurrentUser(accessToken)
+  chats = await getChats(accessToken)
+
+  console.log(user)
+  console.log(chats)
+})
 
 </script>
 
 <div class="wrapper">
 
-  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} username={userData?.username}/>
+  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats}/>
 
   <main class="main">
 

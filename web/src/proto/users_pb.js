@@ -60,8 +60,9 @@ proto.neptune.MyUserResponse.prototype.toObject = function(opt_includeInstance) 
  */
 proto.neptune.MyUserResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    email: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    username: jspb.Message.getFieldWithDefault(msg, 2, "")
+    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    email: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    username: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -100,9 +101,13 @@ proto.neptune.MyUserResponse.deserializeBinaryFromReader = function(msg, reader)
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setEmail(value);
+      msg.setId(value);
       break;
     case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setEmail(value);
+      break;
+    case 3:
       var value = /** @type {string} */ (reader.readString());
       msg.setUsername(value);
       break;
@@ -135,17 +140,24 @@ proto.neptune.MyUserResponse.prototype.serializeBinary = function() {
  */
 proto.neptune.MyUserResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getEmail();
+  f = message.getId();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getUsername();
+  f = message.getEmail();
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getUsername();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
       f
     );
   }
@@ -153,32 +165,47 @@ proto.neptune.MyUserResponse.serializeBinaryToWriter = function(message, writer)
 
 
 /**
- * optional string email = 1;
+ * optional string ID = 1;
  * @return {string}
  */
-proto.neptune.MyUserResponse.prototype.getEmail = function() {
+proto.neptune.MyUserResponse.prototype.getId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.neptune.MyUserResponse.prototype.setEmail = function(value) {
+proto.neptune.MyUserResponse.prototype.setId = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string username = 2;
+ * optional string Email = 2;
  * @return {string}
  */
-proto.neptune.MyUserResponse.prototype.getUsername = function() {
+proto.neptune.MyUserResponse.prototype.getEmail = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.neptune.MyUserResponse.prototype.setUsername = function(value) {
+proto.neptune.MyUserResponse.prototype.setEmail = function(value) {
   jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string Username = 3;
+ * @return {string}
+ */
+proto.neptune.MyUserResponse.prototype.getUsername = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.neptune.MyUserResponse.prototype.setUsername = function(value) {
+  jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

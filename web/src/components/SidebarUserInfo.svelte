@@ -1,14 +1,10 @@
 <script>
   import {createEventDispatcher} from 'svelte'
   import {useNavigate} from 'svelte-navigator'
-
+  import {logout} from '../controllers/users'
   const dispatch = createEventDispatcher()
   const navigate = useNavigate()
 
-  const Logout = () => {
-    window.localStorage.removeItem("refreshToken")
-    navigate("/login")
-  }
 
   export let username
 </script>
@@ -20,7 +16,7 @@
     <h2>{username}</h2>
   </div>
   <div class="icon-container">
-    <span on:click={Logout} class="logout-icon"></span>
+    <span on:click={() => logout(navigate)} class="logout-icon"></span>
   </div>
 </div> 
 

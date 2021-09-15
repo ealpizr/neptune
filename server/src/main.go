@@ -21,6 +21,7 @@ func main() {
 
 	services.RegisterAuthService(s)
 	services.RegisterUsersService(s)
+	services.RegisterChatServer(s)
 
 	lis, err := net.Listen("tcp", ":3001")
 	if err != nil {

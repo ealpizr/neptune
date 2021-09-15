@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "neptune/proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+package neptune;
+
+service Chats {
+  rpc GetUserChats(google.protobuf.Empty) returns (UserChatsResponse) {}
+}
+
+message UserChatsResponse {
+  repeated Chat chats = 1;
+}
+
+message Chat {
+  string user = 1;
+  Message message = 2;
+}
+
+message Message {
+  google.protobuf.Timestamp timestamp = 1;
+  string content = 2;
+}

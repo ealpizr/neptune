@@ -25,8 +25,11 @@ func AuthRequired(ctx context.Context, req interface{}, info *grpc.UnaryServerIn
 		return req, status.Error(codes.Unauthenticated, "authorization token was not provided")
 	}
 
-	uid, _ := utils.GetUserIDFromJWT(token[0])
+	uid, err := utils.GetUserIDFromJWT(token[0])
+	if err != nil {
+		return req, status.Error(codes.Unauthenticated, err.Error())
+	}
 
-	metadata.AppendToOutgoingContext(ctx, "userID", uid)
+	ctx = metadata.AppendToOutgoingContext(ctx, "userID", uid)
 	return handler(ctx, req)
 }

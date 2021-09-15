@@ -1,5 +1,6 @@
 <script>
     import ChatListItem from './ChatListItem.svelte'
+    export let chats = []
 </script>
 
 <div class="sidebar--chatlist">
@@ -10,7 +11,9 @@
     <div class="icon"><span></span></div>
   </div>
 
-  <ChatListItem />
+  {#each chats as c}
+  <ChatListItem chat={c}/>
+  {/each}
 
 </div>
 
