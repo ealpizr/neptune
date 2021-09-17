@@ -9,6 +9,7 @@ services:
       - 35729:35729
     volumes:
       - ./web:/app
+      - /app/node_modules
     command: yarn dev
 
   backend:
