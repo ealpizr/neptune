@@ -15,10 +15,24 @@ const getCurrentUser = accessToken => {
   })
 }
 
+const findUserByUsername = username => {
+  return new Promise((resolve, reject) => {
+    const req = new proto.neptune.FindUserByUsernameRequest()
+    req.setUsername(username)
+    client
+      .findUserByUsername(req, {})
+      .then(u => resolve(u.toObject()))
+      .catch(e => {
+        console.log(e)
+        reject(e)
+      })
+  })
+}
+
 const logout = navigate => {
   window.localStorage.removeItem('refreshToken')
   window.sessionStorage.removeItem('accessToken')
   navigate('/login')
 }
 
-export { getCurrentUser, logout }
+export { getCurrentUser, findUserByUsername, logout }

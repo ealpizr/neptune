@@ -8,18 +8,26 @@ package neptune;
 
 service Chats {
   rpc GetUserChats(google.protobuf.Empty) returns (UserChatsResponse) {}
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty) {}
 }
 
 message UserChatsResponse {
-  repeated Chat chats = 1;
+  repeated Chat Chats = 1;
+}
+
+message SendMessageRequest {
+  string Receiver = 1;
+  string Content = 2;
 }
 
 message Chat {
-  string user = 1;
-  Message message = 2;
+  string ReceiverID = 1;
+  string User = 2;
+  Message Message = 3;
 }
 
 message Message {
-  google.protobuf.Timestamp timestamp = 1;
-  string content = 2;
+  google.protobuf.Timestamp Timestamp = 1;
+  string Content = 2;
+  string Sender = 3;
 }

@@ -1,18 +1,36 @@
 <script>
+import { findUserByUsername } from '../controllers/users';
+
     import ChatListItem from './ChatListItem.svelte'
+    import StartConversation from './StartConversation.svelte';
     export let chats = []
+
+    let searchDelay
+    let searchInputValue = ""
+    let searchResults
+    const handleSearch = () => {
+      clearTimeout(searchDelay)
+      searchDelay = setTimeout(() => {
+        findUserByUsername(searchInputValue)
+        .then(u => searchResults = u)
+      }, 1000)
+    }
 </script>
 
 <div class="sidebar--chatlist">
     
   <h2 class="header">Chats</h2>
   <div class="input">
-    <input type="text" placeholder="Search...">
+    <input type="text" placeholder="Search..." bind:value={searchInputValue} on:input={handleSearch}>
     <div class="icon"><span></span></div>
   </div>
 
+  {#if searchResults?.id}
+    <StartConversation user={searchResults} on:changeActiveChat />
+  {/if}
+
   {#each chats as c}
-  <ChatListItem chat={c}/>
+  <ChatListItem chat={c} on:changeActiveChat/>
   {/each}
 
 </div>

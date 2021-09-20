@@ -4,10 +4,10 @@ package proto
 
 import (
 	context "context"
-	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,7 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersClient interface {
-	GetMyUser(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MyUserResponse, error)
+	GetMyUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MyUserResponse, error)
+	FindUserByUsername(ctx context.Context, in *FindUserByUsernameRequest, opts ...grpc.CallOption) (*FindUserByUsernameResponse, error)
 }
 
 type usersClient struct {
@@ -30,9 +31,18 @@ func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
 	return &usersClient{cc}
 }
 
-func (c *usersClient) GetMyUser(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*MyUserResponse, error) {
+func (c *usersClient) GetMyUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MyUserResponse, error) {
 	out := new(MyUserResponse)
 	err := c.cc.Invoke(ctx, "/neptune.Users/GetMyUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersClient) FindUserByUsername(ctx context.Context, in *FindUserByUsernameRequest, opts ...grpc.CallOption) (*FindUserByUsernameResponse, error) {
+	out := new(FindUserByUsernameResponse)
+	err := c.cc.Invoke(ctx, "/neptune.Users/FindUserByUsername", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +53,8 @@ func (c *usersClient) GetMyUser(ctx context.Context, in *empty.Empty, opts ...gr
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
 type UsersServer interface {
-	GetMyUser(context.Context, *empty.Empty) (*MyUserResponse, error)
+	GetMyUser(context.Context, *emptypb.Empty) (*MyUserResponse, error)
+	FindUserByUsername(context.Context, *FindUserByUsernameRequest) (*FindUserByUsernameResponse, error)
 	mustEmbedUnimplementedUsersServer()
 }
 
@@ -51,8 +62,11 @@ type UsersServer interface {
 type UnimplementedUsersServer struct {
 }
 
-func (UnimplementedUsersServer) GetMyUser(context.Context, *empty.Empty) (*MyUserResponse, error) {
+func (UnimplementedUsersServer) GetMyUser(context.Context, *emptypb.Empty) (*MyUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMyUser not implemented")
+}
+func (UnimplementedUsersServer) FindUserByUsername(context.Context, *FindUserByUsernameRequest) (*FindUserByUsernameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindUserByUsername not implemented")
 }
 func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
@@ -68,7 +82,7 @@ func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
 }
 
 func _Users_GetMyUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(empty.Empty)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -80,7 +94,25 @@ func _Users_GetMyUser_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/neptune.Users/GetMyUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetMyUser(ctx, req.(*empty.Empty))
+		return srv.(UsersServer).GetMyUser(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Users_FindUserByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindUserByUsernameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).FindUserByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neptune.Users/FindUserByUsername",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).FindUserByUsername(ctx, req.(*FindUserByUsernameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -95,6 +127,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMyUser",
 			Handler:    _Users_GetMyUser_Handler,
+		},
+		{
+			MethodName: "FindUserByUsername",
+			Handler:    _Users_FindUserByUsername_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

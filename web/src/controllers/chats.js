@@ -16,4 +16,19 @@ const getChats = accessToken => {
   })
 }
 
-export { getChats }
+const sendMessage = (accessToken, receiverId, content) => {
+  return new Promise((resolve, reject) => {
+    const request = new proto.neptune.SendMessageRequest()
+    request.setReceiver(receiverId)
+    request.setContent(content)
+    client
+      .sendMessage(request, { authorization: accessToken })
+      .then(() => resolve())
+      .catch(e => {
+        console.log(e)
+        reject(e)
+      })
+  })
+}
+
+export { getChats, sendMessage }

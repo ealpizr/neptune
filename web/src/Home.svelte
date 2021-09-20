@@ -5,15 +5,20 @@ import Sidebar from "./components/Sidebar.svelte";
 import {onMount} from 'svelte'
 import {useNavigate} from "svelte-navigator"
 import {getCurrentUser} from './controllers/users'
-import {getChats} from './controllers/chats'
+import {getChats, sendMessage as sm} from './controllers/chats'
 
 const navigate = useNavigate()
 let isMenuOpened = false
 let refreshToken = window.localStorage.getItem("refreshToken")
 let accessToken = window.sessionStorage.getItem("accessToken")
+let message = ""
+let receiverId = ""
 let user = {}
 let chats = []
 
+const sendMessage = () => {
+  sm(accessToken, receiverId, message).then(() => message = "")
+}
 
 onMount(async () => {
   if (!refreshToken) {
@@ -31,7 +36,10 @@ onMount(async () => {
 
 <div class="wrapper">
 
-  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats}/>
+  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={id => {
+    console.log("active chat has changed, id: ", id.detail.id)
+    receiverId = id.detail.id
+  }}/>
 
   <main class="main">
 
@@ -46,10 +54,10 @@ onMount(async () => {
     </div>
 
     <div class="main--input">
-      <input type="text" placeholder="Type a message...">
+      <input type="text" placeholder="Type a message..." bind:value={message}>
       <div class="test">
         <span class="image-icon"></span>
-        <span class="send-icon"></span>
+        <span class="send-icon" on:click={sendMessage}></span>
       </div>
     </div>
   </main>

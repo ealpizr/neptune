@@ -7,10 +7,20 @@ package neptune;
 
 service Users {
   rpc GetMyUser(google.protobuf.Empty) returns (MyUserResponse) {}
+  rpc FindUserByUsername(FindUserByUsernameRequest) returns (FindUserByUsernameResponse) {}
 }
 
 message MyUserResponse {
   string ID = 1;
   string Email = 2;
   string Username = 3;
+}
+
+message FindUserByUsernameRequest {
+  string Username = 1;
+}
+
+message FindUserByUsernameResponse {
+  string ID = 1;
+  string Username = 2;
 }

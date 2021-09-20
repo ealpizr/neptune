@@ -10,7 +10,7 @@ export let chats = []
 
 <section class="{FullScreen ? "sidebar--fullscreen" : "sidebar"}">
   <SidebarUserInfo on:closeMenu username={username}/>
-  <SidebarChatList chats={chats}/>
+  <SidebarChatList chats={chats} on:changeActiveChat/>
 </section>
 
 <style>

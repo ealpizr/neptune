@@ -1,8 +1,10 @@
 <script>
+  import {createEventDispatcher} from 'svelte'
+  const dispatch = createEventDispatcher()
   export let chat
 </script>
 
-<div class="container">
+<div class="container" on:click={() => dispatch('changeActiveChat', {id: chat?.receiverid})}>
   <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture">
   <div class="chatinfo-container">
     <h3 class="contact-name">{chat?.user}</h3>

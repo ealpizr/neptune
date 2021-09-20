@@ -18,6 +18,10 @@ func AuthRequired(ctx context.Context, req interface{}, info *grpc.UnaryServerIn
 		return handler(ctx, req)
 	}
 
+	if info.FullMethod == "/neptune.Users/FindUserByUsername" {
+		return handler(ctx, req)
+	}
+
 	md, _ := metadata.FromIncomingContext(ctx)
 	token := md["authorization"]
 

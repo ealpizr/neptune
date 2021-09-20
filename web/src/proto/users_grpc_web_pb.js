@@ -152,5 +152,85 @@ proto.neptune.UsersPromiseClient.prototype.getMyUser =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.neptune.FindUserByUsernameRequest,
+ *   !proto.neptune.FindUserByUsernameResponse>}
+ */
+const methodDescriptor_Users_FindUserByUsername = new grpc.web.MethodDescriptor(
+  '/neptune.Users/FindUserByUsername',
+  grpc.web.MethodType.UNARY,
+  proto.neptune.FindUserByUsernameRequest,
+  proto.neptune.FindUserByUsernameResponse,
+  /**
+   * @param {!proto.neptune.FindUserByUsernameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.neptune.FindUserByUsernameResponse.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.neptune.FindUserByUsernameRequest,
+ *   !proto.neptune.FindUserByUsernameResponse>}
+ */
+const methodInfo_Users_FindUserByUsername = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.neptune.FindUserByUsernameResponse,
+  /**
+   * @param {!proto.neptune.FindUserByUsernameRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.neptune.FindUserByUsernameResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.neptune.FindUserByUsernameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.neptune.FindUserByUsernameResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.neptune.FindUserByUsernameResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.neptune.UsersClient.prototype.findUserByUsername =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/neptune.Users/FindUserByUsername',
+      request,
+      metadata || {},
+      methodDescriptor_Users_FindUserByUsername,
+      callback);
+};
+
+
+/**
+ * @param {!proto.neptune.FindUserByUsernameRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.neptune.FindUserByUsernameResponse>}
+ *     Promise that resolves to the response
+ */
+proto.neptune.UsersPromiseClient.prototype.findUserByUsername =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/neptune.Users/FindUserByUsername',
+      request,
+      metadata || {},
+      methodDescriptor_Users_FindUserByUsername);
+};
+
+
 module.exports = proto.neptune;
 
