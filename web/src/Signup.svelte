@@ -31,7 +31,7 @@ import MessageModal from './components/MessageModal.svelte'
       return error = "passwords do not match"
     }
 
-    const client = new AuthClient("http://192.168.1.190:3000")
+    const client = new AuthClient("http://localhost:3000")
     const req = new proto.neptune.SignUpRequest()
 
     req.setEmail(email)

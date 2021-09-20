@@ -1,5 +1,5 @@
 import { UsersPromiseClient } from '../proto/users_grpc_web_pb'
-const client = new UsersPromiseClient('http://192.168.1.190:3000')
+const client = new UsersPromiseClient('http://localhost:3000')
 
 const getCurrentUser = accessToken => {
   return new Promise((resolve, reject) => {

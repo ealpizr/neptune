@@ -24,7 +24,7 @@
       return error = "invalid password"
     }
 
-    const client = new AuthClient("http://192.168.1.190:3000")
+    const client = new AuthClient("http://localhost:3000")
 
     const req = new proto.neptune.LoginRequest()
     req.setUsername(username)
