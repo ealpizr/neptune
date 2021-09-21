@@ -1,14 +1,16 @@
 <script>
   export let Type;
+  export let Content;
+  export let Timestamp;
 </script>
 
 <div class="container">
   <div class="message {Type}">
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.
+      {Content}
     </p>
   </div>
-  <p class="timestamp {Type}">10:20</p>
+  <p class="timestamp {Type}">{Timestamp}</p>
 </div>
 
 <style>

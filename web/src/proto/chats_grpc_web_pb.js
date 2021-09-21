@@ -234,5 +234,80 @@ proto.neptune.ChatsPromiseClient.prototype.sendMessage =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.neptune.GetChatMessagesRequest,
+ *   !proto.neptune.Message>}
+ */
+const methodDescriptor_Chats_GetChatMessages = new grpc.web.MethodDescriptor(
+  '/neptune.Chats/GetChatMessages',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.neptune.GetChatMessagesRequest,
+  proto.neptune.Message,
+  /**
+   * @param {!proto.neptune.GetChatMessagesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.neptune.Message.deserializeBinary
+);
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.neptune.GetChatMessagesRequest,
+ *   !proto.neptune.Message>}
+ */
+const methodInfo_Chats_GetChatMessages = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.neptune.Message,
+  /**
+   * @param {!proto.neptune.GetChatMessagesRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.neptune.Message.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.neptune.GetChatMessagesRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.neptune.Message>}
+ *     The XHR Node Readable Stream
+ */
+proto.neptune.ChatsClient.prototype.getChatMessages =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/neptune.Chats/GetChatMessages',
+      request,
+      metadata || {},
+      methodDescriptor_Chats_GetChatMessages);
+};
+
+
+/**
+ * @param {!proto.neptune.GetChatMessagesRequest} request The request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.neptune.Message>}
+ *     The XHR Node Readable Stream
+ */
+proto.neptune.ChatsPromiseClient.prototype.getChatMessages =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/neptune.Chats/GetChatMessages',
+      request,
+      metadata || {},
+      methodDescriptor_Chats_GetChatMessages);
+};
+
+
 module.exports = proto.neptune;
 

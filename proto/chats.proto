@@ -9,6 +9,11 @@ package neptune;
 service Chats {
   rpc GetUserChats(google.protobuf.Empty) returns (UserChatsResponse) {}
   rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty) {}
+  rpc GetChatMessages(GetChatMessagesRequest) returns (stream Message) {}
+}
+
+message GetChatMessagesRequest {
+  string receiverId = 1;
 }
 
 message UserChatsResponse {

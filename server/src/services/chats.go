@@ -5,6 +5,7 @@ import (
 	"log"
 	p "neptune/proto"
 	"neptune/src/models"
+	"neptune/src/utils"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.mongodb.org/mongo-driver/bson"
@@ -93,4 +94,37 @@ func (s *ChatService) SendMessage(ctx context.Context, req *p.SendMessageRequest
 
 	return &empty.Empty{}, nil
 
+}
+
+func (s *ChatService) GetChatMessages(req *p.GetChatMessagesRequest, stream p.Chats_GetChatMessagesServer) error {
+	c := s.server.DB.Collection("chats")
+
+	md, _ := metadata.FromIncomingContext(stream.Context())
+	token := md["authorization"]
+
+	if len(token) == 0 {
+		return status.Error(codes.Unauthenticated, "authorization token was not provided")
+	}
+
+	uID, err := utils.GetUserIDFromJWT(token[0])
+	if err != nil {
+		return status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	receiverID := req.ReceiverId
+
+	messages := struct {
+		Messages []*p.Message
+	}{}
+
+	if err := c.FindOne(stream.Context(), primitive.M{"users": primitive.M{"$all": primitive.A{uID, receiverID}}}).Decode(&messages); err != nil {
+		log.Println(err)
+	}
+
+	for _, m := range messages.Messages {
+		log.Println(m)
+		stream.Send(m)
+	}
+
+	return nil
 }

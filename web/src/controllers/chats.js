@@ -31,4 +31,10 @@ const sendMessage = (accessToken, receiverId, content) => {
   })
 }
 
-export { getChats, sendMessage }
+const getChatMessages = (accessToken, receiverId) => {
+  const request = new proto.neptune.GetChatMessagesRequest()
+  request.setReceiverid(receiverId)
+  return client.getChatMessages(request, { authorization: accessToken })
+}
+
+export { getChats, sendMessage, getChatMessages }

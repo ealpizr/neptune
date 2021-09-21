@@ -5,7 +5,7 @@ import Sidebar from "./components/Sidebar.svelte";
 import {onMount} from 'svelte'
 import {useNavigate} from "svelte-navigator"
 import {getCurrentUser} from './controllers/users'
-import {getChats, sendMessage as sm} from './controllers/chats'
+import {getChatMessages, getChats, sendMessage as sm} from './controllers/chats'
 
 const navigate = useNavigate()
 let isMenuOpened = false
@@ -15,9 +15,21 @@ let message = ""
 let receiverId = ""
 let user = {}
 let chats = []
+let messages = []
 
 const sendMessage = () => {
   sm(accessToken, receiverId, message).then(() => message = "")
+}
+
+const onActiveChatChange = id => {
+  console.log("active chat has changed, id: ", id.detail.id)
+  receiverId = id.detail.id
+  const msgStream = getChatMessages(accessToken, receiverId)
+  msgStream.on('data', response => {
+    messages.push(response.toObject())
+    messages = messages
+    console.log(messages)
+  })
 }
 
 onMount(async () => {
@@ -36,10 +48,7 @@ onMount(async () => {
 
 <div class="wrapper">
 
-  <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={id => {
-    console.log("active chat has changed, id: ", id.detail.id)
-    receiverId = id.detail.id
-  }}/>
+  <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={onActiveChatChange}/>
 
   <main class="main">
 
@@ -49,11 +58,11 @@ onMount(async () => {
       <!-- TODO: custom scroll -->
       {#if !receiverId}
       <h3>Open a chat to see the messages</h3>
+      {:else}
+        {#each messages as m}
+          <ChatMessage Content={m.content} Timestamp={m.timestamp.seconds} Type="{m.sender == receiverId ? "received" : "sent"}" />
+        {/each}
       {/if}
-      <!-- <ChatMessage Type="sent" />
-      <ChatMessage Type="received"/>
-      <ChatMessage Type="sent"/>
-      <ChatMessage Type="received"/> -->
     </div>
 
     <div class="main--input">
