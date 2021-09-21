@@ -4,7 +4,8 @@ import { findUserByUsername } from '../controllers/users';
     import ChatListItem from './ChatListItem.svelte'
     import StartConversation from './StartConversation.svelte';
     export let chats = []
-
+    export let activeId
+    
     let searchDelay
     let searchInputValue = ""
     let searchResults
@@ -30,7 +31,7 @@ import { findUserByUsername } from '../controllers/users';
   {/if}
 
   {#each chats as c}
-  <ChatListItem chat={c} on:changeActiveChat/>
+  <ChatListItem chat={c} activeId={activeId} on:changeActiveChat/>
   {/each}
 
 </div>

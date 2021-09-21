@@ -5,12 +5,13 @@ import SidebarUserInfo from './SidebarUserInfo.svelte';
 export let FullScreen = false
 export let username
 export let chats = []
+export let activeId
 
 </script>
 
 <section class="{FullScreen ? "sidebar--fullscreen" : "sidebar"}">
   <SidebarUserInfo on:closeMenu username={username}/>
-  <SidebarChatList chats={chats} on:changeActiveChat/>
+  <SidebarChatList activeId={activeId} chats={chats} on:changeActiveChat/>
 </section>
 
 <style>

@@ -36,21 +36,24 @@ onMount(async () => {
 
 <div class="wrapper">
 
-  <Sidebar FullScreen={isMenuOpened} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={id => {
+  <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={id => {
     console.log("active chat has changed, id: ", id.detail.id)
     receiverId = id.detail.id
   }}/>
 
   <main class="main">
 
-    <ChatContactInfo on:openMenu={e => isMenuOpened = true}/>
+    <!-- <ChatContactInfo on:openMenu={e => isMenuOpened = true}/> -->
 
     <div class="main--chat">
       <!-- TODO: custom scroll -->
-      <ChatMessage Type="sent" />
+      {#if !receiverId}
+      <h3>Open a chat to see the messages</h3>
+      {/if}
+      <!-- <ChatMessage Type="sent" />
       <ChatMessage Type="received"/>
       <ChatMessage Type="sent"/>
-      <ChatMessage Type="received"/>
+      <ChatMessage Type="received"/> -->
     </div>
 
     <div class="main--input">
@@ -64,6 +67,13 @@ onMount(async () => {
 </div>
 
 <style>
+
+  .main--chat h3 {
+    color: var(--clr-std);
+    font-size: 2.4rem;
+    align-self: center;
+  }
+
   .wrapper {
     position: absolute;
     height: 100%;
