@@ -28,7 +28,9 @@ const onActiveChatChange = id => {
   msgStream.on('data', response => {
     messages.push(response.toObject())
     messages = messages
-    console.log(messages)
+  })
+  msgStream.on('end', () => {
+    console.log('stream ended')
   })
 }
 

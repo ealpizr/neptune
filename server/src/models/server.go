@@ -10,12 +10,14 @@ import (
 type Server struct {
 	p.UnimplementedGreeterServer
 	p.UnimplementedAuthServer
-	Server *grpc.Server
-	DB     *mongo.Database
+	Server  *grpc.Server
+	DB      *mongo.Database
+	Clients map[string](chan interface{})
 }
 
 func NewServer(opts []grpc.ServerOption) *Server {
 	return &Server{
-		Server: grpc.NewServer(opts...),
+		Server:  grpc.NewServer(opts...),
+		Clients: make(map[string]chan interface{}),
 	}
 }

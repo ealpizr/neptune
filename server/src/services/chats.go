@@ -75,7 +75,7 @@ func (s *ChatService) SendMessage(ctx context.Context, req *p.SendMessageRequest
 
 	log.Println(req.Receiver)
 
-	ur, err := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, req.Receiver}}}, bson.M{
+	_, err := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, req.Receiver}}}, bson.M{
 		"$push": bson.M{
 			"messages": p.Message{
 				Content:   req.Content,
@@ -90,7 +90,13 @@ func (s *ChatService) SendMessage(ctx context.Context, req *p.SendMessageRequest
 		return &empty.Empty{}, status.Error(codes.Internal, "internal error, try again later")
 	}
 
-	log.Println(ur)
+	go func() {
+		s.server.Clients[uID] <- &p.Message{
+			Content:   req.Content,
+			Timestamp: timestamppb.Now(),
+			Sender:    uID,
+		}
+	}()
 
 	return &empty.Empty{}, nil
 
@@ -121,10 +127,19 @@ func (s *ChatService) GetChatMessages(req *p.GetChatMessagesRequest, stream p.Ch
 		log.Println(err)
 	}
 
-	for _, m := range messages.Messages {
-		log.Println(m)
-		stream.Send(m)
+	s.server.Clients[uID] = make(chan interface{})
+
+	go func() {
+		for _, z := range messages.Messages {
+			s.server.Clients[uID] <- z
+		}
+	}()
+
+	for m := range s.server.Clients[uID] {
+		stream.Send(m.(*p.Message))
 	}
+
+	log.Println("before return")
 
 	return nil
 }
