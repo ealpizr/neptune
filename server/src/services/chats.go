@@ -10,7 +10,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -73,17 +72,24 @@ func (s *ChatService) SendMessage(ctx context.Context, req *p.SendMessageRequest
 
 	uID := md.Get("userID")[0]
 
-	log.Println(req.Receiver)
+	msg := &p.Message{
+		Content:   req.Content,
+		Timestamp: timestamppb.Now(),
+		Sender:    uID,
+	}
 
-	_, err := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, req.Receiver}}}, bson.M{
+	ok, err := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, req.Receiver}}}, bson.M{
 		"$push": bson.M{
-			"messages": p.Message{
-				Content:   req.Content,
-				Timestamp: timestamppb.Now(),
-				Sender:    uID,
-			},
+			"messages": msg,
 		},
-	}, options.Update().SetUpsert(true))
+	})
+
+	if ok.MatchedCount == 0 {
+		_, err = c.InsertOne(ctx, primitive.M{"users": primitive.A{uID, req.Receiver}, "messages": primitive.A{msg}})
+		if err != nil {
+			log.Println(err)
+		}
+	}
 
 	if err != nil {
 		log.Println(err)
@@ -91,11 +97,7 @@ func (s *ChatService) SendMessage(ctx context.Context, req *p.SendMessageRequest
 	}
 
 	go func() {
-		s.server.Clients[uID] <- &p.Message{
-			Content:   req.Content,
-			Timestamp: timestamppb.Now(),
-			Sender:    uID,
-		}
+		s.server.Clients[uID] <- msg
 	}()
 
 	return &empty.Empty{}, nil
@@ -123,7 +125,7 @@ func (s *ChatService) GetChatMessages(req *p.GetChatMessagesRequest, stream p.Ch
 		Messages []*p.Message
 	}{}
 
-	if err := c.FindOne(stream.Context(), primitive.M{"users": primitive.M{"$all": primitive.A{uID, receiverID}}}).Decode(&messages); err != nil {
+	if err := c.FindOne(stream.Context(), primitive.M{"users": primitive.M{"$all": primitive.A{primitive.M{"$elemMatch": primitive.M{"$eq": uID}}, primitive.M{"$elemMatch": primitive.M{"$eq": receiverID}}}}}).Decode(&messages); err != nil {
 		log.Println(err)
 	}
 

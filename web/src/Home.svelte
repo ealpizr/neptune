@@ -53,9 +53,7 @@ onMount(async () => {
   <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={onActiveChatChange}/>
 
   <main class="main">
-
-    <!-- <ChatContactInfo on:openMenu={e => isMenuOpened = true}/> -->
-
+    <ChatContactInfo on:openMenu={e => isMenuOpened = true}/>
     <div class="main--chat">
       <!-- TODO: custom scroll -->
       {#if !receiverId}
