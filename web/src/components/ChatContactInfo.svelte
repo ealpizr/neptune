@@ -1,10 +1,12 @@
 <script>
+  export let receiverId
   import {createEventDispatcher} from 'svelte'
   const dispatch = createEventDispatcher()
 </script>
 
 <div class="main--contactinfo">
   <div class="menu-icon-container"><span class="menu-icon" on:click={() => dispatch("openMenu")}></span></div>
+  {#if receiverId}
   <div class="container">
     <img class="contact-picture" src="/img2.png">
   <div class="contactinfo-container">
@@ -12,11 +14,11 @@
     <p class="contact-status">Online</p>
   </div>
   </div>
-  <div class="more-icon-container"><span class="more-icon"></span></div>
+    <div class="more-icon-container"><span class="more-icon"></span></div>
+  {/if}
 </div>
 
 <style>
-  
   .container {
     display: flex;
     flex-direction: row;

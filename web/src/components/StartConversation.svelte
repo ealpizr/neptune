@@ -4,7 +4,7 @@
   export let user
 </script>
 
-<div class="wrapper" on:click={() => dispatch("changeActiveChat", {id: user.id})}>
+<div class="wrapper" on:click={() => dispatch("changeActiveChat", {chat: user})}>
     <div class="container">
       <p>Start a conversation with</p>
     <div>

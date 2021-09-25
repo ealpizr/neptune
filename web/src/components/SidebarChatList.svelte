@@ -14,7 +14,7 @@ import { findUserByUsername } from '../controllers/users';
       searchDelay = setTimeout(() => {
         findUserByUsername(searchInputValue)
         .then(u => searchResults = u)
-      }, 1000)
+      }, 500)
     }
 </script>
 
@@ -28,15 +28,35 @@ import { findUserByUsername } from '../controllers/users';
 
   {#if searchResults?.id}
     <StartConversation user={searchResults} on:changeActiveChat />
+  {:else if searchInputValue}
+    <p class="not-found">User {searchInputValue} not found</p>
   {/if}
 
   {#each chats as c}
   <ChatListItem chat={c} activeId={activeId} on:changeActiveChat/>
   {/each}
 
+  {#if chats.length == 0 && !searchInputValue}
+  <p class="find-people">Use the search box to find people</p>
+  {/if}
+
 </div>
 
 <style>
+  .not-found {
+    color: var(--clr-accent-red);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .find-people {
+    color: var(--clr-std);
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
   .header {
     color: var(--clr-std);
     font-size: 2rem;

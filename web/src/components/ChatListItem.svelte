@@ -5,7 +5,7 @@
   export let chat
 </script>
 
-<div class="container {activeId == chat?.receiverid && "active"}" on:click={() => dispatch('changeActiveChat', {id: chat?.receiverid})}>
+<div class="container {activeId == chat?.receiverid && "active"}" on:click={() => dispatch('changeActiveChat', {chat: chat})}>
   <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture">
   <div class="chatinfo-container">
     <h3 class="contact-name">{chat?.user}</h3>

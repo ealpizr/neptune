@@ -15,22 +15,27 @@ let message = ""
 let receiverId = ""
 let user = {}
 let chats = []
-let messages = []
+let activeChat = { messages: [] }
 
 const sendMessage = () => {
   sm(accessToken, receiverId, message).then(() => message = "")
 }
 
-const onActiveChatChange = id => {
-  console.log("active chat has changed, id: ", id.detail.id)
-  receiverId = id.detail.id
+const onActiveChatChange = chat => {
+
+  console.log("active chat has changed")
+  console.log("new object is")
+  console.log(chat.detail)
+
+  activeChat = chat
+  receiverId = chat.receiverid.detail.id
   const msgStream = getChatMessages(accessToken, receiverId)
   msgStream.on('data', response => {
-    messages.push(response.toObject())
-    messages = messages
+    activeChat.messages.push(response.toObject())
+    activeChat.messages = activeChat.messages
   })
   msgStream.on('end', () => {
-    console.log('stream ended')
+    // something happened and stream ended
   })
 }
 
@@ -41,9 +46,6 @@ onMount(async () => {
 
   user = await getCurrentUser(accessToken)
   chats = await getChats(accessToken)
-
-  console.log(user)
-  console.log(chats)
 })
 
 </script>
@@ -53,13 +55,13 @@ onMount(async () => {
   <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={onActiveChatChange}/>
 
   <main class="main">
-    <ChatContactInfo on:openMenu={e => isMenuOpened = true}/>
+    <ChatContactInfo receiverId={receiverId} on:openMenu={e => isMenuOpened = true}/>
     <div class="main--chat">
       <!-- TODO: custom scroll -->
       {#if !receiverId}
       <h3>Open a chat to see the messages</h3>
       {:else}
-        {#each messages as m}
+        {#each activeChat.messages as m}
           <ChatMessage Content={m.content} Timestamp={m.timestamp.seconds} Type="{m.sender == receiverId ? "received" : "sent"}" />
         {/each}
       {/if}
