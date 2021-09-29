@@ -4,8 +4,8 @@ import ChatMessage from "./components/ChatMessage.svelte";
 import Sidebar from "./components/Sidebar.svelte";
 import {onMount} from 'svelte'
 import {useNavigate} from "svelte-navigator"
-import {getCurrentUser} from './controllers/users'
-import {getChatMessages, getChats, sendMessage as sm} from './controllers/chats'
+// import {getCurrentUser} from './controllers/users'
+import {connect, sendTest} from './controllers/neptune'
 
 const navigate = useNavigate()
 let isMenuOpened = false
@@ -17,35 +17,39 @@ let user = {}
 let chats = []
 let activeChat = { messages: [] }
 
-const sendMessage = () => {
-  sm(accessToken, receiverId, message).then(() => message = "")
-}
+// const sendMessage = () => {
+//   sm(accessToken, receiverId, message).then(() => message = "")
+// }
 
-const onActiveChatChange = chat => {
+// const onActiveChatChange = chat => {
 
-  console.log("active chat has changed")
-  console.log("new object is")
-  console.log(chat.detail)
+//   console.log("active chat has changed")
+//   console.log("new object is")
+//   console.log(chat.detail)
 
-  activeChat = chat
-  receiverId = chat.receiverid.detail.id
-  const msgStream = getChatMessages(accessToken, receiverId)
-  msgStream.on('data', response => {
-    activeChat.messages.push(response.toObject())
-    activeChat.messages = activeChat.messages
-  })
-  msgStream.on('end', () => {
-    // something happened and stream ended
-  })
-}
+//   activeChat = chat
+//   receiverId = chat.receiverid.detail.id
+//   const msgStream = getChatMessages(accessToken, receiverId)
+//   msgStream.on('data', response => {
+//     activeChat.messages.push(response.toObject())
+//     activeChat.messages = activeChat.messages
+//   })
+//   msgStream.on('end', () => {
+//     // something happened and stream ended
+//   })
+// }
 
 onMount(async () => {
   if (!refreshToken) {
     return navigate("/login")
   } 
 
-  user = await getCurrentUser(accessToken)
-  chats = await getChats(accessToken)
+  // user = await getCurrentUser(accessToken)
+  // chats = await getChats(accessToken)
+
+  await connect(accessToken)
+  await sendTest(accessToken)
+
 })
 
 </script>

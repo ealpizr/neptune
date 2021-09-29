@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Login from './Login.svelte'
   import SignUp from './Signup.svelte'
   import Home from './Home.svelte'
