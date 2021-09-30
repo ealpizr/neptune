@@ -5,6 +5,52 @@ import * as jspb from "google-protobuf";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 import * as google_protobuf_timestamp_pb from "google-protobuf/google/protobuf/timestamp_pb";
 
+export class SendMessageRequest extends jspb.Message {
+  getRemoteuserid(): string;
+  setRemoteuserid(value: string): void;
+
+  hasMessage(): boolean;
+  clearMessage(): void;
+  getMessage(): Message | undefined;
+  setMessage(value?: Message): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SendMessageRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SendMessageRequest): SendMessageRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: SendMessageRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SendMessageRequest;
+  static deserializeBinaryFromReader(message: SendMessageRequest, reader: jspb.BinaryReader): SendMessageRequest;
+}
+
+export namespace SendMessageRequest {
+  export type AsObject = {
+    remoteuserid: string,
+    message?: Message.AsObject,
+  }
+}
+
+export class FindUserByUsernameRequest extends jspb.Message {
+  getUsername(): string;
+  setUsername(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): FindUserByUsernameRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: FindUserByUsernameRequest): FindUserByUsernameRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: FindUserByUsernameRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): FindUserByUsernameRequest;
+  static deserializeBinaryFromReader(message: FindUserByUsernameRequest, reader: jspb.BinaryReader): FindUserByUsernameRequest;
+}
+
+export namespace FindUserByUsernameRequest {
+  export type AsObject = {
+    username: string,
+  }
+}
+
 export class TestRequest extends jspb.Message {
   getMessage(): string;
   setMessage(value: string): void;
@@ -59,6 +105,11 @@ export class Packet extends jspb.Message {
   getMessageitem(): Message | undefined;
   setMessageitem(value?: Message): void;
 
+  clearUserlistList(): void;
+  getUserlistList(): Array<User>;
+  setUserlistList(value: Array<User>): void;
+  addUserlist(value?: User, index?: number): User;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Packet.AsObject;
   static toObject(includeInstance: boolean, msg: Packet): Packet.AsObject;
@@ -78,6 +129,7 @@ export namespace Packet {
     chatitem?: Chat.AsObject,
     messagelistList: Array<Message.AsObject>,
     messageitem?: Message.AsObject,
+    userlistList: Array<User.AsObject>,
   }
 }
 
@@ -194,6 +246,7 @@ export interface TypeMap {
   CHAT_ITEM: 3;
   MESSAGE_LIST: 4;
   MESSAGE_ITEM: 5;
+  USER_LIST: 6;
 }
 
 export const Type: TypeMap;

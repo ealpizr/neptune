@@ -23,6 +23,8 @@ type NeptuneClient interface {
 	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetChats(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	FindUserByUsername(ctx context.Context, in *FindUserByUsernameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type neptuneClient struct {
@@ -92,6 +94,24 @@ func (c *neptuneClient) GetChats(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
+func (c *neptuneClient) FindUserByUsername(ctx context.Context, in *FindUserByUsernameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/neptune.Neptune/FindUserByUsername", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *neptuneClient) SendMessage(ctx context.Context, in *SendMessageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/neptune.Neptune/SendMessage", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NeptuneServer is the server API for Neptune service.
 // All implementations must embed UnimplementedNeptuneServer
 // for forward compatibility
@@ -100,6 +120,8 @@ type NeptuneServer interface {
 	Test(context.Context, *TestRequest) (*emptypb.Empty, error)
 	GetCurrentUser(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	GetChats(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	FindUserByUsername(context.Context, *FindUserByUsernameRequest) (*emptypb.Empty, error)
+	SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedNeptuneServer()
 }
 
@@ -118,6 +140,12 @@ func (UnimplementedNeptuneServer) GetCurrentUser(context.Context, *emptypb.Empty
 }
 func (UnimplementedNeptuneServer) GetChats(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetChats not implemented")
+}
+func (UnimplementedNeptuneServer) FindUserByUsername(context.Context, *FindUserByUsernameRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindUserByUsername not implemented")
+}
+func (UnimplementedNeptuneServer) SendMessage(context.Context, *SendMessageRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendMessage not implemented")
 }
 func (UnimplementedNeptuneServer) mustEmbedUnimplementedNeptuneServer() {}
 
@@ -207,6 +235,42 @@ func _Neptune_GetChats_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Neptune_FindUserByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindUserByUsernameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NeptuneServer).FindUserByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neptune.Neptune/FindUserByUsername",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NeptuneServer).FindUserByUsername(ctx, req.(*FindUserByUsernameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Neptune_SendMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NeptuneServer).SendMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neptune.Neptune/SendMessage",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NeptuneServer).SendMessage(ctx, req.(*SendMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Neptune_ServiceDesc is the grpc.ServiceDesc for Neptune service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -225,6 +289,14 @@ var Neptune_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetChats",
 			Handler:    _Neptune_GetChats_Handler,
+		},
+		{
+			MethodName: "FindUserByUsername",
+			Handler:    _Neptune_FindUserByUsername_Handler,
+		},
+		{
+			MethodName: "SendMessage",
+			Handler:    _Neptune_SendMessage_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

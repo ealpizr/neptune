@@ -1,65 +1,41 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
+  import type {User} from '../proto/neptune_pb'
   const dispatch = createEventDispatcher();
-  export let user;
+  export let userSearchResults: Array<User>;
+
+  const startNewConversation = (user: User) => {
+    dispatch("changeActiveChat", {user})
+  }
 </script>
 
-<div
-  class="wrapper"
-  on:click={() => dispatch("changeActiveChat", { chat: user })}
->
-  <div class="container">
-    <p>Start a conversation with</p>
-    <div>
-      <img src="/img1.png" alt="" />
-      <h3>{user.username}</h3>
-    </div>
+<h3>Start a new chat with:</h3>
+{#each userSearchResults as u}
+  <div class="wrapper" on:click = {() => startNewConversation(u)}>
+    <p>{u.getUsername()}</p>
   </div>
-  <div class="icon">-></div>
-</div>
+{/each}
 
 <style>
-  .icon {
-    font-size: 4rem;
-    color: var(--clr-accent-blue);
-    margin-right: 1em;
+  h3 {
+    color: var(--clr-std);
+    font-size: 1.8rem;
+    font-weight: 700;
   }
 
   .wrapper {
     cursor: pointer;
+    margin-top: 5px;
+    padding: 1em;
     width: 100%;
-    background-color: #232a38;
+    background-color: var(--clr-secondary);
+    max-height: 150px;
     display: flex;
-    flex-direction: row;
-    justify-content: center;
     align-items: center;
   }
 
-  .container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  p {
+  .wrapper p {
     color: var(--clr-std);
-    font-size: 1.4rem;
-    margin: 1em 0;
-  }
-
-  .container div {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 1em;
-    margin-bottom: 1em;
-  }
-
-  div h3 {
-    color: var(--clr-std);
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 </style>

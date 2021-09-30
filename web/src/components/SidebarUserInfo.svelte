@@ -1,10 +1,16 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte'
   import { useNavigate } from 'svelte-navigator'
   const dispatch = createEventDispatcher()
   const navigate = useNavigate()
 
   export let username
+
+  const Logout = (): void => {
+    window.localStorage.removeItem("refreshToken")
+    window.sessionStorage.removeItem("accessToken")
+    navigate('/login')
+  }
 </script>
 
 <div class="sidebar--userinfo">
@@ -16,7 +22,7 @@
     <h2>{username}</h2>
   </div>
   <div class="icon-container">
-    <span on:click={() => console.log('logout')} class="logout-icon" />
+    <span on:click={Logout} class="logout-icon" />
   </div>
 </div>
 

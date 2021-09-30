@@ -15,41 +15,18 @@
   let refreshToken = window.localStorage.getItem('refreshToken')
   let accessToken = window.sessionStorage.getItem('accessToken')
   let currentUser: User = new User()
+  let remoteUser: User = new User()
 
   let message = ''
-  let receiverId = ''
   let chats = []
   let activeChat = { messages: [] }
 
-  // const sendMessage = () => {
-  //   sm(accessToken, receiverId, message).then(() => message = "")
-  // }
-
-  // const onActiveChatChange = chat => {
-
-  //   console.log("active chat has changed")
-  //   console.log("new object is")
-  //   console.log(chat.detail)
-
-  //   activeChat = chat
-  //   receiverId = chat.receiverid.detail.id
-  //   const msgStream = getChatMessages(accessToken, receiverId)
-  //   msgStream.on('data', response => {
-  //     activeChat.messages.push(response.toObject())
-  //     activeChat.messages = activeChat.messages
-  //   })
-  //   msgStream.on('end', () => {
-  //     // something happened and stream ended
-  //   })
-  // }
+  let userSearchResults: Array<User> = []
 
   onMount(async () => {
     if (!refreshToken) {
       return navigate('/login')
     }
-
-    // user = await getCurrentUser(accessToken)
-    // chats = await getChats(accessToken)
 
     grpc.invoke(Neptune.Connect, {
       host: 'http://localhost:3000',
@@ -60,6 +37,8 @@
         switch (p.getType()) {
           case Type.CURRENT_USER:
             currentUser = p.getCurrentuser()
+          case Type.USER_LIST:
+            userSearchResults = p.getUserlistList()
         }
       },
       onEnd: (code: grpc.Code, message: string) => {
@@ -78,23 +57,33 @@
       },
     })
   })
+
+  const changeActiveChat = (e) => {
+    console.log("active chat has changed")
+    console.log(e)
+    remoteUser = e.detail.user
+  }
+
+  const sendMessage = () => {
+    
+  }
 </script>
 
 <div class="wrapper">
-  <Sidebar FullScreen={isMenuOpened} username={currentUser.getUsername()} />
+  <Sidebar FullScreen={isMenuOpened} on:changeActiveChat={changeActiveChat} {userSearchResults} username={currentUser.getUsername()} />
 
   <main class="main">
-    <ChatContactInfo {receiverId} on:openMenu={e => (isMenuOpened = true)} />
+    <ChatContactInfo {remoteUser} on:openMenu={e => (isMenuOpened = true)} />
     <div class="main--chat">
       <!-- TODO: custom scroll -->
-      {#if !receiverId}
+      {#if !remoteUser}
         <h3>Open a chat to see the messages</h3>
       {:else}
         {#each activeChat.messages as m}
           <ChatMessage
             Content={m.content}
             Timestamp={m.timestamp.seconds}
-            Type={m.sender == receiverId ? 'received' : 'sent'}
+            Type={m.sender == remoteUser ? 'received' : 'sent'}
           />
         {/each}
       {/if}
@@ -104,10 +93,9 @@
       <input type="text" placeholder="Type a message..." bind:value={message} />
       <div class="test">
         <span class="image-icon" />
-        <!-- <span class="send-icon" on:click={sendMessage} /> -->
+        <span class="send-icon" on:click={sendMessage} />
       </div>
     </div>
-    <!-- <span class="send-icon" on:click={sendMessage} /> -->
   </main>
 </div>
 

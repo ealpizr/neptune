@@ -1,6 +1,7 @@
-<script>
-  export let receiverId;
+<script lang="ts">
+  export let remoteUser: User;
   import { createEventDispatcher } from "svelte";
+  import { User } from "../proto/neptune_pb";
   const dispatch = createEventDispatcher();
 </script>
 
@@ -8,11 +9,11 @@
   <div class="menu-icon-container">
     <span class="menu-icon" on:click={() => dispatch("openMenu")} />
   </div>
-  {#if receiverId}
+  {#if remoteUser.getUsername()}
     <div class="container">
       <img class="contact-picture" src="/img2.png" />
       <div class="contactinfo-container">
-        <h3 class="contact-name">Jane Doe</h3>
+        <h3 class="contact-name">{remoteUser.getUsername()}</h3>
         <p class="contact-status">Online</p>
       </div>
     </div>

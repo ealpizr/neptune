@@ -1,16 +1,37 @@
 <script>
   import ChatListItem from './ChatListItem.svelte'
   import StartConversation from './StartConversation.svelte'
+  import {createEventDispatcher} from 'svelte'
+
+  import {grpc} from "@improbable-eng/grpc-web"
+  import {FindUserByUsernameRequest, User} from '../proto/neptune_pb'
+  import {Neptune} from '../proto/neptune_pb_service'
+
   export let chats = []
   export let activeId
+  export let userSearchResults
 
   let searchDelay
   let searchInputValue = ''
-  let searchResults
+
+  const dispatch = createEventDispatcher()
+
   const handleSearch = () => {
     clearTimeout(searchDelay)
     searchDelay = setTimeout(() => {
-      // findUserByUsername(searchInputValue).then((u) => (searchResults = u));
+      const request = new FindUserByUsernameRequest()
+      request.setUsername(searchInputValue)
+      grpc.unary(Neptune.FindUserByUsername, {
+        host: "http://localhost:3000",
+        request,
+        metadata: {
+          authorization: window.sessionStorage.getItem("accessToken")
+        },
+        onEnd: (x) => {
+          console.log(x)
+          console.log("find user request has been sent")
+        }
+      })
     }, 500)
   }
 </script>
@@ -27,8 +48,12 @@
     <div class="icon"><span /></div>
   </div>
 
-  {#if searchResults?.id}
-    <StartConversation user={searchResults} on:changeActiveChat />
+  {#if userSearchResults.length > 0}
+    <StartConversation {userSearchResults} on:changeActiveChat={e => {
+      searchInputValue = ""
+      userSearchResults = []
+      dispatch("changeActiveChat", e.detail)
+      }} />
   {:else if searchInputValue}
     <p class="not-found">User {searchInputValue} not found</p>
   {/if}

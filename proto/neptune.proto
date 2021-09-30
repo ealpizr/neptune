@@ -11,6 +11,17 @@ service Neptune {
   rpc Test(TestRequest) returns (google.protobuf.Empty) {}
   rpc GetCurrentUser(google.protobuf.Empty) returns (google.protobuf.Empty) {}
   rpc GetChats(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc FindUserByUsername(FindUserByUsernameRequest) returns (google.protobuf.Empty) {}
+  rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty) {}
+}
+
+message SendMessageRequest {
+  string RemoteUserID = 1;
+  Message Message = 2;
+}
+
+message FindUserByUsernameRequest {
+  string Username = 1;
 }
 
 message TestRequest {
@@ -24,6 +35,7 @@ enum Type {
   CHAT_ITEM = 3;
   MESSAGE_LIST = 4;
   MESSAGE_ITEM = 5;
+  USER_LIST = 6;
 }
 
 message Packet {
@@ -34,6 +46,7 @@ message Packet {
   Chat ChatItem = 5;
   repeated Message MessageList = 6;
   Message MessageItem = 7;
+  repeated User UserList = 8;
 }
 
 message RefreshToken {

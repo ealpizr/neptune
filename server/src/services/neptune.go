@@ -105,6 +105,80 @@ func (s *NeptuneService) GetChats(ctx context.Context, req *empty.Empty) (*empty
 	return &empty.Empty{}, nil
 }
 
+func (s *NeptuneService) FindUserByUsername(ctx context.Context, req *pb.FindUserByUsernameRequest) (*empty.Empty, error) {
+
+	c := s.server.DB.Collection("users")
+
+	md, _ := metadata.FromOutgoingContext(ctx)
+	uID, _ := primitive.ObjectIDFromHex(md.Get("userID")[0])
+
+	if len(req.Username) < 3 {
+		s.server.Clients[uID.Hex()] <- &pb.Packet{
+			Type: pb.Type_USER_LIST,
+		}
+
+		return &empty.Empty{}, nil
+	}
+
+	cur, _ := c.Find(ctx, bson.M{"username": bson.M{"$regex": req.Username, "$options": "i"}})
+
+	users := []struct {
+		ID       primitive.ObjectID `bson:"_id"`
+		Username string
+	}{}
+
+	cur.All(ctx, &users)
+
+	ul := []*pb.User{}
+	for _, u := range users {
+		if u.ID != uID {
+			ul = append(ul, &pb.User{
+				ID:       u.ID.Hex(),
+				Username: u.Username,
+			})
+		}
+	}
+
+	s.server.Clients[uID.Hex()] <- &pb.Packet{
+		Type:     pb.Type_USER_LIST,
+		UserList: ul,
+	}
+
+	return &empty.Empty{}, nil
+}
+
+func (s *NeptuneService) SendMessage(ctx context.Context, req *pb.SendMessageRequest) (*empty.Empty, error) {
+	c := s.server.DB.Collection("chats")
+
+	md, _ := metadata.FromOutgoingContext(ctx)
+	uID, _ := primitive.ObjectIDFromHex(md.Get("userID")[0])
+	remoteUserID, _ := primitive.ObjectIDFromHex(req.RemoteUserID)
+
+	ok, _ := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, remoteUserID}}}, bson.M{
+		"$push": bson.M{
+			"messages": req.Message,
+		},
+	})
+
+	if ok.MatchedCount == 0 {
+		c.InsertOne(ctx, primitive.M{"users": primitive.A{uID, remoteUserID}, "messages": primitive.A{req.Message}})
+	}
+
+	pck := &pb.Packet{
+		Type:        pb.Type_MESSAGE_ITEM,
+		MessageItem: req.Message,
+	}
+
+	ch, online := s.server.Clients[remoteUserID.Hex()]
+	if online {
+		ch <- pck
+	}
+
+	s.server.Clients[uID.Hex()] <- pck
+
+	return &empty.Empty{}, nil
+}
+
 func (s *NeptuneService) Test(ctx context.Context, req *pb.TestRequest) (*empty.Empty, error) {
 	md, _ := metadata.FromOutgoingContext(ctx)
 	uID := md.Get("userID")[0]

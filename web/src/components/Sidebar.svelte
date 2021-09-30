@@ -1,14 +1,15 @@
 <script>
-  // import SidebarChatList from "./SidebarChatList.svelte";
+  import SidebarChatList from "./SidebarChatList.svelte";
   import SidebarUserInfo from './SidebarUserInfo.svelte'
 
   export let FullScreen = false
   export let username
+  export let userSearchResults
 </script>
 
 <section class={FullScreen ? 'sidebar--fullscreen' : 'sidebar'}>
   <SidebarUserInfo on:closeMenu {username} />
-  <!-- <SidebarChatList {activeId} {chats} on:changeActiveChat /> -->
+  <SidebarChatList {userSearchResults} on:changeActiveChat />
 </section>
 
 <style>

@@ -41,12 +41,32 @@ type NeptuneGetChats = {
   readonly responseType: typeof google_protobuf_empty_pb.Empty;
 };
 
+type NeptuneFindUserByUsername = {
+  readonly methodName: string;
+  readonly service: typeof Neptune;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof proto_neptune_pb.FindUserByUsernameRequest;
+  readonly responseType: typeof google_protobuf_empty_pb.Empty;
+};
+
+type NeptuneSendMessage = {
+  readonly methodName: string;
+  readonly service: typeof Neptune;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof proto_neptune_pb.SendMessageRequest;
+  readonly responseType: typeof google_protobuf_empty_pb.Empty;
+};
+
 export class Neptune {
   static readonly serviceName: string;
   static readonly Connect: NeptuneConnect;
   static readonly Test: NeptuneTest;
   static readonly GetCurrentUser: NeptuneGetCurrentUser;
   static readonly GetChats: NeptuneGetChats;
+  static readonly FindUserByUsername: NeptuneFindUserByUsername;
+  static readonly SendMessage: NeptuneSendMessage;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -107,6 +127,24 @@ export class NeptuneClient {
   ): UnaryResponse;
   getChats(
     requestMessage: google_protobuf_empty_pb.Empty,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  findUserByUsername(
+    requestMessage: proto_neptune_pb.FindUserByUsernameRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  findUserByUsername(
+    requestMessage: proto_neptune_pb.FindUserByUsernameRequest,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  sendMessage(
+    requestMessage: proto_neptune_pb.SendMessageRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  sendMessage(
+    requestMessage: proto_neptune_pb.SendMessageRequest,
     callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
   ): UnaryResponse;
 }

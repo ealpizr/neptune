@@ -20,7 +20,6 @@ func main() {
 	s.DB = database.Connect("mongodb+srv://mongo:mongo@cluster0.arf9f.mongodb.net", "neptune")
 
 	services.RegisterAuthService(s)
-	services.RegisterUsersService(s)
 	services.RegisterNeptuneServer(s)
 
 	lis, err := net.Listen("tcp", ":3001")
