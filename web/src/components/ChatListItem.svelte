@@ -1,12 +1,15 @@
 <script>
-  import {createEventDispatcher} from 'svelte'
-  const dispatch = createEventDispatcher()
-  export let activeId
-  export let chat
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+  export let activeId;
+  export let chat;
 </script>
 
-<div class="container {activeId == chat?.receiverid && "active"}" on:click={() => dispatch('changeActiveChat', {chat: chat})}>
-  <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture">
+<div
+  class="container {activeId == chat?.receiverid && 'active'}"
+  on:click={() => dispatch("changeActiveChat", { chat: chat })}
+>
+  <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture" />
   <div class="chatinfo-container">
     <h3 class="contact-name">{chat?.user}</h3>
     <p class="message-content">{chat?.message.content}</p>
@@ -16,7 +19,7 @@
 
 <style>
   .active {
-    background-color: #262C39;
+    background-color: #262c39;
   }
 
   .container {
@@ -66,5 +69,4 @@
       height: 100px;
     }
   }
-  
 </style>

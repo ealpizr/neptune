@@ -1,77 +1,99 @@
-<script>
+<script lang="ts">
   import UserInput from './components/UserInput.svelte'
   import Button from './components/Button.svelte'
-  import {AuthClient} from './proto/auth_grpc_web_pb'
-  import {Link, useNavigate} from 'svelte-navigator'
-import MessageModal from './components/MessageModal.svelte'
+  import MessageModal from './components/MessageModal.svelte'
+
+  import { Link, useNavigate } from 'svelte-navigator'
+
+  import { grpc } from '@improbable-eng/grpc-web'
+  import { Auth } from './proto/auth_pb_service'
+  import { SignUpRequest, SignUpResponse } from './proto/auth_pb'
+  import type { UnaryOutput } from '@improbable-eng/grpc-web/dist/typings/unary'
 
   const navigate = useNavigate()
-  let [email, username, password, passwordConfirmation, error] = ["", "", "", "", "", ""]  
+  let [email, username, password, passwordConfirmation, error] = [
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+  ]
 
-  const refreshToken = window.localStorage.getItem("refreshToken")
+  const refreshToken = window.localStorage.getItem('refreshToken')
   if (refreshToken) {
-    navigate("/")
+    navigate('/')
   }
 
-  const SignUp = e => {
-
-    if (email == "") {
-      return error = "invalid email"
+  const Signup = e => {
+    if (email == '') {
+      return (error = 'invalid email')
     }
 
-    if (username == "") {
-      return error = "invalid username"
+    if (username == '') {
+      return (error = 'invalid username')
     }
 
-    if (password == "") {
-      return error = "invalid password"
+    if (password == '') {
+      return (error = 'invalid password')
     }
 
     if (password != passwordConfirmation) {
-      return error = "passwords do not match"
+      return (error = 'passwords do not match')
     }
 
-    const client = new AuthClient("http://localhost:3000")
-    const req = new proto.neptune.SignUpRequest()
+    const request = new SignUpRequest()
+    request.setEmail(email)
+    request.setUsername(username)
+    request.setPassword(password)
 
-    req.setEmail(email)
-    req.setUsername(username)
-    req.setPassword(password)
-    client.signUp(req, {}, (err, res) => {
-      if (err) {
-        console.log(err)
-        return error = err.message
-      }
-      navigate("/login", {
-        state: {
-          showModal: true
+    grpc.unary(Auth.SignUp, {
+      host: 'http://localhost:3000',
+      request,
+      onEnd: (r: UnaryOutput<SignUpResponse>) => {
+        if (r.status != grpc.Code.OK) {
+          return (error = 'something went wrong, try again later')
         }
-      })
+        navigate('/login', {
+          state: {
+            showModal: true,
+          },
+        })
+      },
     })
-
   }
 </script>
 
 <div class="container">
   <h1>NEPTUNE</h1>
   {#if error}
-  <MessageModal Type="error" Text={error} />
+    <MessageModal Type="error" Text={error} />
   {/if}
-  <form on:submit|preventDefault={SignUp} on:change={() => {if (error) error=""}}>
+  <form
+    on:submit|preventDefault={Signup}
+    on:change={() => {
+      if (error) error = ''
+    }}
+  >
     <div>
       <UserInput For="Email" Type="email" bind:value={email} />
       <UserInput For="Username" bind:value={username} />
       <UserInput For="Password" Type="password" bind:value={password} />
-      <UserInput For="Confirm password" Type="password" ID="passwordConfirmation" bind:value={passwordConfirmation} />
+      <UserInput
+        For="Confirm password"
+        Type="password"
+        ID="passwordConfirmation"
+        bind:value={passwordConfirmation}
+      />
     </div>
-    <Button Text="SIGN UP"/>
+    <Button Text="SIGN UP" />
   </form>
 
   <Link to="/login">
     <a href="#" class="text-center">
       <p>Already have an account?</p>
       <p>Login!</p>
-      </a>
+    </a>
   </Link>
 </div>
 
@@ -115,7 +137,7 @@ import MessageModal from './components/MessageModal.svelte'
     justify-content: space-between;
     margin-bottom: 1em;
   }
-  
+
   a {
     flex: 0;
     color: var(--clr-accent-blue);
@@ -129,7 +151,6 @@ import MessageModal from './components/MessageModal.svelte'
 
   a:hover {
     text-decoration: underline;
-    color: #006AA1;
+    color: #006aa1;
   }
-  
 </style>

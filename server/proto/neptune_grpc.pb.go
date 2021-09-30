@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -14,88 +15,224 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GreeterClient is the client API for Greeter service.
+// NeptuneClient is the client API for Neptune service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type GreeterClient interface {
-	GreetMe(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (*GreetingResponse, error)
+type NeptuneClient interface {
+	Connect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Neptune_ConnectClient, error)
+	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetChats(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
-type greeterClient struct {
+type neptuneClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewGreeterClient(cc grpc.ClientConnInterface) GreeterClient {
-	return &greeterClient{cc}
+func NewNeptuneClient(cc grpc.ClientConnInterface) NeptuneClient {
+	return &neptuneClient{cc}
 }
 
-func (c *greeterClient) GreetMe(ctx context.Context, in *GreetingRequest, opts ...grpc.CallOption) (*GreetingResponse, error) {
-	out := new(GreetingResponse)
-	err := c.cc.Invoke(ctx, "/neptune.Greeter/GreetMe", in, out, opts...)
+func (c *neptuneClient) Connect(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Neptune_ConnectClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Neptune_ServiceDesc.Streams[0], "/neptune.Neptune/Connect", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &neptuneConnectClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Neptune_ConnectClient interface {
+	Recv() (*Packet, error)
+	grpc.ClientStream
+}
+
+type neptuneConnectClient struct {
+	grpc.ClientStream
+}
+
+func (x *neptuneConnectClient) Recv() (*Packet, error) {
+	m := new(Packet)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *neptuneClient) Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/neptune.Neptune/Test", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// GreeterServer is the server API for Greeter service.
-// All implementations must embed UnimplementedGreeterServer
+func (c *neptuneClient) GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/neptune.Neptune/GetCurrentUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *neptuneClient) GetChats(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/neptune.Neptune/GetChats", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// NeptuneServer is the server API for Neptune service.
+// All implementations must embed UnimplementedNeptuneServer
 // for forward compatibility
-type GreeterServer interface {
-	GreetMe(context.Context, *GreetingRequest) (*GreetingResponse, error)
-	mustEmbedUnimplementedGreeterServer()
+type NeptuneServer interface {
+	Connect(*emptypb.Empty, Neptune_ConnectServer) error
+	Test(context.Context, *TestRequest) (*emptypb.Empty, error)
+	GetCurrentUser(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	GetChats(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	mustEmbedUnimplementedNeptuneServer()
 }
 
-// UnimplementedGreeterServer must be embedded to have forward compatible implementations.
-type UnimplementedGreeterServer struct {
+// UnimplementedNeptuneServer must be embedded to have forward compatible implementations.
+type UnimplementedNeptuneServer struct {
 }
 
-func (UnimplementedGreeterServer) GreetMe(context.Context, *GreetingRequest) (*GreetingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GreetMe not implemented")
+func (UnimplementedNeptuneServer) Connect(*emptypb.Empty, Neptune_ConnectServer) error {
+	return status.Errorf(codes.Unimplemented, "method Connect not implemented")
 }
-func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
+func (UnimplementedNeptuneServer) Test(context.Context, *TestRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
+}
+func (UnimplementedNeptuneServer) GetCurrentUser(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentUser not implemented")
+}
+func (UnimplementedNeptuneServer) GetChats(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetChats not implemented")
+}
+func (UnimplementedNeptuneServer) mustEmbedUnimplementedNeptuneServer() {}
 
-// UnsafeGreeterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to GreeterServer will
+// UnsafeNeptuneServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NeptuneServer will
 // result in compilation errors.
-type UnsafeGreeterServer interface {
-	mustEmbedUnimplementedGreeterServer()
+type UnsafeNeptuneServer interface {
+	mustEmbedUnimplementedNeptuneServer()
 }
 
-func RegisterGreeterServer(s grpc.ServiceRegistrar, srv GreeterServer) {
-	s.RegisterService(&Greeter_ServiceDesc, srv)
+func RegisterNeptuneServer(s grpc.ServiceRegistrar, srv NeptuneServer) {
+	s.RegisterService(&Neptune_ServiceDesc, srv)
 }
 
-func _Greeter_GreetMe_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GreetingRequest)
+func _Neptune_Connect_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(NeptuneServer).Connect(m, &neptuneConnectServer{stream})
+}
+
+type Neptune_ConnectServer interface {
+	Send(*Packet) error
+	grpc.ServerStream
+}
+
+type neptuneConnectServer struct {
+	grpc.ServerStream
+}
+
+func (x *neptuneConnectServer) Send(m *Packet) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Neptune_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GreeterServer).GreetMe(ctx, in)
+		return srv.(NeptuneServer).Test(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/neptune.Greeter/GreetMe",
+		FullMethod: "/neptune.Neptune/Test",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GreeterServer).GreetMe(ctx, req.(*GreetingRequest))
+		return srv.(NeptuneServer).Test(ctx, req.(*TestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
+func _Neptune_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NeptuneServer).GetCurrentUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neptune.Neptune/GetCurrentUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NeptuneServer).GetCurrentUser(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Neptune_GetChats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NeptuneServer).GetChats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/neptune.Neptune/GetChats",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NeptuneServer).GetChats(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Neptune_ServiceDesc is the grpc.ServiceDesc for Neptune service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Greeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "neptune.Greeter",
-	HandlerType: (*GreeterServer)(nil),
+var Neptune_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "neptune.Neptune",
+	HandlerType: (*NeptuneServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GreetMe",
-			Handler:    _Greeter_GreetMe_Handler,
+			MethodName: "Test",
+			Handler:    _Neptune_Test_Handler,
+		},
+		{
+			MethodName: "GetCurrentUser",
+			Handler:    _Neptune_GetCurrentUser_Handler,
+		},
+		{
+			MethodName: "GetChats",
+			Handler:    _Neptune_GetChats_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Connect",
+			Handler:       _Neptune_Connect_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "proto/neptune.proto",
 }

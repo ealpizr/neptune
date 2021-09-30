@@ -23,10 +23,30 @@ type NeptuneTest = {
   readonly responseType: typeof google_protobuf_empty_pb.Empty;
 };
 
+type NeptuneGetCurrentUser = {
+  readonly methodName: string;
+  readonly service: typeof Neptune;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof google_protobuf_empty_pb.Empty;
+  readonly responseType: typeof google_protobuf_empty_pb.Empty;
+};
+
+type NeptuneGetChats = {
+  readonly methodName: string;
+  readonly service: typeof Neptune;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof google_protobuf_empty_pb.Empty;
+  readonly responseType: typeof google_protobuf_empty_pb.Empty;
+};
+
 export class Neptune {
   static readonly serviceName: string;
   static readonly Connect: NeptuneConnect;
   static readonly Test: NeptuneTest;
+  static readonly GetCurrentUser: NeptuneGetCurrentUser;
+  static readonly GetChats: NeptuneGetChats;
 }
 
 export type ServiceError = { message: string, code: number; metadata: grpc.Metadata }
@@ -69,6 +89,24 @@ export class NeptuneClient {
   ): UnaryResponse;
   test(
     requestMessage: proto_neptune_pb.TestRequest,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  getCurrentUser(
+    requestMessage: google_protobuf_empty_pb.Empty,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  getCurrentUser(
+    requestMessage: google_protobuf_empty_pb.Empty,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  getChats(
+    requestMessage: google_protobuf_empty_pb.Empty,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
+  ): UnaryResponse;
+  getChats(
+    requestMessage: google_protobuf_empty_pb.Empty,
     callback: (error: ServiceError|null, responseMessage: google_protobuf_empty_pb.Empty|null) => void
   ): UnaryResponse;
 }

@@ -1,29 +1,30 @@
 <script>
-import { findUserByUsername } from '../controllers/users';
+  import ChatListItem from './ChatListItem.svelte'
+  import StartConversation from './StartConversation.svelte'
+  export let chats = []
+  export let activeId
 
-    import ChatListItem from './ChatListItem.svelte'
-    import StartConversation from './StartConversation.svelte';
-    export let chats = []
-    export let activeId
-    
-    let searchDelay
-    let searchInputValue = ""
-    let searchResults
-    const handleSearch = () => {
-      clearTimeout(searchDelay)
-      searchDelay = setTimeout(() => {
-        findUserByUsername(searchInputValue)
-        .then(u => searchResults = u)
-      }, 500)
-    }
+  let searchDelay
+  let searchInputValue = ''
+  let searchResults
+  const handleSearch = () => {
+    clearTimeout(searchDelay)
+    searchDelay = setTimeout(() => {
+      // findUserByUsername(searchInputValue).then((u) => (searchResults = u));
+    }, 500)
+  }
 </script>
 
 <div class="sidebar--chatlist">
-    
   <h2 class="header">Chats</h2>
   <div class="input">
-    <input type="text" placeholder="Search..." bind:value={searchInputValue} on:input={handleSearch}>
-    <div class="icon"><span></span></div>
+    <input
+      type="text"
+      placeholder="Search..."
+      bind:value={searchInputValue}
+      on:input={handleSearch}
+    />
+    <div class="icon"><span /></div>
   </div>
 
   {#if searchResults?.id}
@@ -33,13 +34,12 @@ import { findUserByUsername } from '../controllers/users';
   {/if}
 
   {#each chats as c}
-  <ChatListItem chat={c} activeId={activeId} on:changeActiveChat/>
+    <ChatListItem chat={c} {activeId} on:changeActiveChat />
   {/each}
 
   {#if chats.length == 0 && !searchInputValue}
-  <p class="find-people">Use the search box to find people</p>
+    <p class="find-people">Use the search box to find people</p>
   {/if}
-
 </div>
 
 <style>
@@ -64,7 +64,7 @@ import { findUserByUsername } from '../controllers/users';
   }
 
   .input {
-    display:flex;
+    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;

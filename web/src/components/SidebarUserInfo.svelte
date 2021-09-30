@@ -1,28 +1,28 @@
 <script>
-  import {createEventDispatcher} from 'svelte'
-  import {useNavigate} from 'svelte-navigator'
-  import {logout} from '../controllers/users'
+  import { createEventDispatcher } from 'svelte'
+  import { useNavigate } from 'svelte-navigator'
   const dispatch = createEventDispatcher()
   const navigate = useNavigate()
-
 
   export let username
 </script>
 
 <div class="sidebar--userinfo">
-  <div class="close-icon-container"><span class="close-icon" on:click={() => dispatch("closeMenu")}></span></div>
+  <div class="close-icon-container">
+    <span class="close-icon" on:click={() => dispatch('closeMenu')} />
+  </div>
   <div class="userinfo-container">
     <img src="/img1.png" />
     <h2>{username}</h2>
   </div>
   <div class="icon-container">
-    <span on:click={() => logout(navigate)} class="logout-icon"></span>
+    <span on:click={() => console.log('logout')} class="logout-icon" />
   </div>
-</div> 
+</div>
 
 <style>
   .sidebar--userinfo {
-    background-color: #0F131A;
+    background-color: #0f131a;
     width: 100%;
     height: 10%;
     display: flex;
@@ -30,7 +30,7 @@
     align-items: center;
     justify-content: space-between;
     min-height: 60px;
-  } 
+  }
 
   .sidebar--userinfo img {
     max-width: 70%;
@@ -80,7 +80,7 @@
 
   .close-icon {
     display: block;
-    background-image: url("/close-icon.svg");
+    background-image: url('/close-icon.svg');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

@@ -8,10 +8,10 @@
   --clr-bg-400: #232a38;
   --clr-bg-600: #1a1f2b;
 
-  --ff-main: 'Roboto', sans-serif;
+  --ff-main: "Roboto", sans-serif;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 
 *,
 *::after,

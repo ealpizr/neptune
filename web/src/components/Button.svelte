@@ -1,8 +1,8 @@
 <script>
-  export let Text
+  export let Text;
 </script>
 
-<input type="submit" value={Text} on:click>
+<input type="submit" value={Text} on:click />
 
 <style>
   input {
@@ -20,6 +20,6 @@
   }
 
   input:hover {
-    background-color: #006AA1;
+    background-color: #006aa1;
   }
 </style>

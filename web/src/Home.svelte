@@ -1,88 +1,117 @@
-<script>
-import ChatContactInfo from "./components/ChatContactInfo.svelte";
-import ChatMessage from "./components/ChatMessage.svelte";
-import Sidebar from "./components/Sidebar.svelte";
-import {onMount} from 'svelte'
-import {useNavigate} from "svelte-navigator"
-// import {getCurrentUser} from './controllers/users'
-import {connect, sendTest} from './controllers/neptune'
+<script lang="ts">
+  import ChatContactInfo from './components/ChatContactInfo.svelte'
+  import ChatMessage from './components/ChatMessage.svelte'
+  import Sidebar from './components/Sidebar.svelte'
+  import { onMount } from 'svelte'
+  import { useNavigate } from 'svelte-navigator'
 
-const navigate = useNavigate()
-let isMenuOpened = false
-let refreshToken = window.localStorage.getItem("refreshToken")
-let accessToken = window.sessionStorage.getItem("accessToken")
-let message = ""
-let receiverId = ""
-let user = {}
-let chats = []
-let activeChat = { messages: [] }
+  import { grpc } from '@improbable-eng/grpc-web'
+  import { Packet, Type, User } from './proto/neptune_pb'
+  import { Neptune } from './proto/neptune_pb_service'
+  import pb from 'google-protobuf/google/protobuf/empty_pb'
 
-// const sendMessage = () => {
-//   sm(accessToken, receiverId, message).then(() => message = "")
-// }
+  const navigate = useNavigate()
+  let isMenuOpened = false
+  let refreshToken = window.localStorage.getItem('refreshToken')
+  let accessToken = window.sessionStorage.getItem('accessToken')
+  let currentUser: User = new User()
 
-// const onActiveChatChange = chat => {
+  let message = ''
+  let receiverId = ''
+  let chats = []
+  let activeChat = { messages: [] }
 
-//   console.log("active chat has changed")
-//   console.log("new object is")
-//   console.log(chat.detail)
+  // const sendMessage = () => {
+  //   sm(accessToken, receiverId, message).then(() => message = "")
+  // }
 
-//   activeChat = chat
-//   receiverId = chat.receiverid.detail.id
-//   const msgStream = getChatMessages(accessToken, receiverId)
-//   msgStream.on('data', response => {
-//     activeChat.messages.push(response.toObject())
-//     activeChat.messages = activeChat.messages
-//   })
-//   msgStream.on('end', () => {
-//     // something happened and stream ended
-//   })
-// }
+  // const onActiveChatChange = chat => {
 
-onMount(async () => {
-  if (!refreshToken) {
-    return navigate("/login")
-  } 
+  //   console.log("active chat has changed")
+  //   console.log("new object is")
+  //   console.log(chat.detail)
 
-  // user = await getCurrentUser(accessToken)
-  // chats = await getChats(accessToken)
+  //   activeChat = chat
+  //   receiverId = chat.receiverid.detail.id
+  //   const msgStream = getChatMessages(accessToken, receiverId)
+  //   msgStream.on('data', response => {
+  //     activeChat.messages.push(response.toObject())
+  //     activeChat.messages = activeChat.messages
+  //   })
+  //   msgStream.on('end', () => {
+  //     // something happened and stream ended
+  //   })
+  // }
 
-  await connect(accessToken)
-  await sendTest(accessToken)
+  onMount(async () => {
+    if (!refreshToken) {
+      return navigate('/login')
+    }
 
-})
+    // user = await getCurrentUser(accessToken)
+    // chats = await getChats(accessToken)
 
+    grpc.invoke(Neptune.Connect, {
+      host: 'http://localhost:3000',
+      request: new pb.Empty(),
+      metadata: { authorization: accessToken },
+      onMessage: (p: Packet) => {
+        console.log(`packet has been received, type ${p.getType()}`)
+        switch (p.getType()) {
+          case Type.CURRENT_USER:
+            currentUser = p.getCurrentuser()
+        }
+      },
+      onEnd: (code: grpc.Code, message: string) => {
+        console.log(`stream ended with code ${code} and message ${message}`)
+      },
+    })
+
+    grpc.unary(Neptune.GetCurrentUser, {
+      host: 'http://localhost:3000',
+      request: new pb.Empty(),
+      metadata: {
+        authorization: accessToken,
+      },
+      onEnd: () => {
+        console.log('unary call for request current user invoked')
+      },
+    })
+  })
 </script>
 
 <div class="wrapper">
-
-  <Sidebar FullScreen={isMenuOpened} activeId={receiverId} on:closeMenu={e => isMenuOpened = false} username={user?.username} chats={chats} on:changeActiveChat={onActiveChatChange}/>
+  <Sidebar FullScreen={isMenuOpened} username={currentUser.getUsername()} />
 
   <main class="main">
-    <ChatContactInfo receiverId={receiverId} on:openMenu={e => isMenuOpened = true}/>
+    <ChatContactInfo {receiverId} on:openMenu={e => (isMenuOpened = true)} />
     <div class="main--chat">
       <!-- TODO: custom scroll -->
       {#if !receiverId}
-      <h3>Open a chat to see the messages</h3>
+        <h3>Open a chat to see the messages</h3>
       {:else}
         {#each activeChat.messages as m}
-          <ChatMessage Content={m.content} Timestamp={m.timestamp.seconds} Type="{m.sender == receiverId ? "received" : "sent"}" />
+          <ChatMessage
+            Content={m.content}
+            Timestamp={m.timestamp.seconds}
+            Type={m.sender == receiverId ? 'received' : 'sent'}
+          />
         {/each}
       {/if}
     </div>
 
     <div class="main--input">
-      <input type="text" placeholder="Type a message..." bind:value={message}>
+      <input type="text" placeholder="Type a message..." bind:value={message} />
       <div class="test">
-        <span class="image-icon"></span>
-        <span class="send-icon" on:click={sendMessage}></span>
+        <span class="image-icon" />
+        <!-- <span class="send-icon" on:click={sendMessage} /> -->
       </div>
     </div>
+    <!-- <span class="send-icon" on:click={sendMessage} /> -->
   </main>
 </div>
 
 <style>
-
   .main--chat h3 {
     color: var(--clr-std);
     font-size: 2.4rem;
@@ -99,7 +128,7 @@ onMount(async () => {
 
   .main {
     width: 100%;
-    background-color: #1A1F2B;
+    background-color: #1a1f2b;
     display: flex;
     flex-direction: column;
   }
@@ -124,21 +153,20 @@ onMount(async () => {
   .main--input input {
     border: none;
     font-size: 1.8rem;
-    background-color: #3F4447;
+    background-color: #3f4447;
     width: 100%;
     height: 35px;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
-    padding: 0 .5em;
+    padding: 0 0.5em;
     color: white;
     outline: none;
   }
 
-
   .test {
     width: 80px;
     height: 35px;
-    background-color: #3F4447;
+    background-color: #3f4447;
     display: flex;
     align-items: center;
     justify-content: center;

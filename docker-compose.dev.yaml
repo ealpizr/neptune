@@ -10,7 +10,7 @@ services:
     volumes:
       - ./web:/app
       - /app/node_modules
-    command: yarn dev
+    command: npm run dev
 
   backend:
     build:

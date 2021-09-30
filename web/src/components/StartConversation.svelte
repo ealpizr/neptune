@@ -1,18 +1,21 @@
 <script>
-  import {createEventDispatcher} from 'svelte'
-  const dispatch = createEventDispatcher()
-  export let user
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+  export let user;
 </script>
 
-<div class="wrapper" on:click={() => dispatch("changeActiveChat", {chat: user})}>
-    <div class="container">
-      <p>Start a conversation with</p>
+<div
+  class="wrapper"
+  on:click={() => dispatch("changeActiveChat", { chat: user })}
+>
+  <div class="container">
+    <p>Start a conversation with</p>
     <div>
-      <img src="/img1.png" alt="">
+      <img src="/img1.png" alt="" />
       <h3>{user.username}</h3>
     </div>
-    </div>
-    <div class="icon">-></div>
+  </div>
+  <div class="icon">-></div>
 </div>
 
 <style>
@@ -25,7 +28,7 @@
   .wrapper {
     cursor: pointer;
     width: 100%;
-    background-color: #232A38;
+    background-color: #232a38;
     display: flex;
     flex-direction: row;
     justify-content: center;

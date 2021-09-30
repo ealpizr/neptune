@@ -1,5 +1,5 @@
 <script>
-  export let Type, Text
+  export let Type, Text;
 </script>
 
 <div class="modal-container {Type}">

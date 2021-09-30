@@ -1,17 +1,58 @@
 syntax = "proto3";
 
 option go_package = "neptune/proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 package neptune;
 
-message GreetingResponse {
-  string message = 1;
+service Neptune {
+  rpc Connect(google.protobuf.Empty) returns (stream Packet) {}
+  rpc Test(TestRequest) returns (google.protobuf.Empty) {}
+  rpc GetCurrentUser(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc GetChats(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 }
 
-message GreetingRequest {
-  string name = 1;
+message TestRequest {
+  string Message = 1;
 }
 
-service Greeter {
-  rpc GreetMe(GreetingRequest) returns (GreetingResponse) {}
+enum Type {
+  REFRESH_TOKEN = 0;
+  CURRENT_USER = 1;
+  CHAT_LIST = 2;
+  CHAT_ITEM = 3;
+  MESSAGE_LIST = 4;
+  MESSAGE_ITEM = 5;
+}
+
+message Packet {
+  Type Type = 1;
+  RefreshToken RefreshToken = 2;
+  User CurrentUser = 3;
+  repeated Chat ChatList = 4;
+  Chat ChatItem = 5;
+  repeated Message MessageList = 6;
+  Message MessageItem = 7;
+}
+
+message RefreshToken {
+  string AccessToken = 1;
+  string RefreshToken = 2;
+}
+
+message User {
+  string ID = 1;
+  string Username = 2;
+}
+
+message Chat {
+  repeated string Users = 1;
+  repeated Message Messages = 2;
+}
+
+message Message {
+  string SenderID = 1;
+  string Content = 2;
+  google.protobuf.Timestamp Timestamp = 3;
 }

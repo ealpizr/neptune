@@ -1,18 +1,17 @@
 <script>
-export let For
-export let Type = 'text'
-export let ID = For.toLowerCase()
-export let value
+  export let For;
+  export let Type = "text";
+  export let ID = For.toLowerCase();
+  export let value;
 
-function typeAction(node) {
-  node.type = Type
-}
-
+  function typeAction(node) {
+    node.type = Type;
+  }
 </script>
 
 <label for={ID}>
   <span>{For}</span>
-   <input use:typeAction id={ID} bind:value>
+  <input use:typeAction id={ID} bind:value />
 </label>
 
 <style>

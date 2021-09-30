@@ -34,6 +34,11 @@ export class Packet extends jspb.Message {
   getRefreshtoken(): RefreshToken | undefined;
   setRefreshtoken(value?: RefreshToken): void;
 
+  hasCurrentuser(): boolean;
+  clearCurrentuser(): void;
+  getCurrentuser(): User | undefined;
+  setCurrentuser(value?: User): void;
+
   clearChatlistList(): void;
   getChatlistList(): Array<Chat>;
   setChatlistList(value: Array<Chat>): void;
@@ -68,6 +73,7 @@ export namespace Packet {
   export type AsObject = {
     type: TypeMap[keyof TypeMap],
     refreshtoken?: RefreshToken.AsObject,
+    currentuser?: User.AsObject,
     chatlistList: Array<Chat.AsObject>,
     chatitem?: Chat.AsObject,
     messagelistList: Array<Message.AsObject>,
@@ -96,6 +102,30 @@ export namespace RefreshToken {
   export type AsObject = {
     accesstoken: string,
     refreshtoken: string,
+  }
+}
+
+export class User extends jspb.Message {
+  getId(): string;
+  setId(value: string): void;
+
+  getUsername(): string;
+  setUsername(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): User.AsObject;
+  static toObject(includeInstance: boolean, msg: User): User.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: User, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): User;
+  static deserializeBinaryFromReader(message: User, reader: jspb.BinaryReader): User;
+}
+
+export namespace User {
+  export type AsObject = {
+    id: string,
+    username: string,
   }
 }
 
@@ -159,10 +189,11 @@ export namespace Message {
 
 export interface TypeMap {
   REFRESH_TOKEN: 0;
-  CHAT_LIST: 1;
-  CHAT_ITEM: 2;
-  MESSAGE_LIST: 3;
-  MESSAGE_ITEM: 4;
+  CURRENT_USER: 1;
+  CHAT_LIST: 2;
+  CHAT_ITEM: 3;
+  MESSAGE_LIST: 4;
+  MESSAGE_ITEM: 5;
 }
 
 export const Type: TypeMap;
