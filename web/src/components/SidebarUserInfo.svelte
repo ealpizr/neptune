@@ -15,7 +15,7 @@
 
 <div class="sidebar--userinfo">
   <div class="close-icon-container">
-    <span class="close-icon" on:click={() => dispatch('closeMenu')} />
+    <span class="close-icon" on:click={() => dispatch('toggleMenu')} />
   </div>
   <div class="userinfo-container">
     <img src="/img1.png" />

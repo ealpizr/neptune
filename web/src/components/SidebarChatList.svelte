@@ -52,7 +52,7 @@
     <StartConversation {userSearchResults} on:changeActiveChat={e => {
       searchInputValue = ""
       userSearchResults = []
-      dispatch("changeActiveChat", e.detail)
+      dispatch("changeActiveChat", e.detail.user)      
       }} />
   {:else if searchInputValue}
     <p class="not-found">User {searchInputValue} not found</p>

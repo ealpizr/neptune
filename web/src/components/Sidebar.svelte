@@ -8,7 +8,7 @@
 </script>
 
 <section class={FullScreen ? 'sidebar--fullscreen' : 'sidebar'}>
-  <SidebarUserInfo on:closeMenu {username} />
+  <SidebarUserInfo on:toggleMenu {username} />
   <SidebarChatList {userSearchResults} on:changeActiveChat />
 </section>
 

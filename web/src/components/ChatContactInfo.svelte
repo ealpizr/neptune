@@ -7,7 +7,7 @@
 
 <div class="main--contactinfo">
   <div class="menu-icon-container">
-    <span class="menu-icon" on:click={() => dispatch("openMenu")} />
+    <span class="menu-icon" on:click={() => dispatch("toggleMenu")} />
   </div>
   {#if remoteUser.getUsername()}
     <div class="container">

@@ -6,9 +6,10 @@
   import { useNavigate } from 'svelte-navigator'
 
   import { grpc } from '@improbable-eng/grpc-web'
-  import { Packet, Type, User } from './proto/neptune_pb'
+  import { Packet, Type, User, SendMessageRequest, Message } from './proto/neptune_pb'
   import { Neptune } from './proto/neptune_pb_service'
   import pb from 'google-protobuf/google/protobuf/empty_pb'
+  import timestamp from 'google-protobuf/google/protobuf/timestamp_pb'
 
   const navigate = useNavigate()
   let isMenuOpened = false
@@ -18,8 +19,7 @@
   let remoteUser: User = new User()
 
   let message = ''
-  let chats = []
-  let activeChat = { messages: [] }
+  let activeChat: { messages: Array<Message> } = { messages: [] }
 
   let userSearchResults: Array<User> = []
 
@@ -34,11 +34,18 @@
       metadata: { authorization: accessToken },
       onMessage: (p: Packet) => {
         console.log(`packet has been received, type ${p.getType()}`)
+        console.log(`packet content is ${p}`)
         switch (p.getType()) {
           case Type.CURRENT_USER:
             currentUser = p.getCurrentuser()
+            break
           case Type.USER_LIST:
             userSearchResults = p.getUserlistList()
+            break
+          case Type.MESSAGE_ITEM:
+            activeChat.messages.push(p.getMessageitem())
+            activeChat = activeChat
+            break
         }
       },
       onEnd: (code: grpc.Code, message: string) => {
@@ -58,22 +65,39 @@
     })
   })
 
+  const toggleMenu = () => {
+    isMenuOpened = !isMenuOpened
+  }
+
   const changeActiveChat = (e) => {
-    console.log("active chat has changed")
-    console.log(e)
-    remoteUser = e.detail.user
+    remoteUser = e.detail
+    console.log(activeChat.messages)
   }
 
   const sendMessage = () => {
-    
+    const request = new SendMessageRequest()
+    const msg = new Message()
+    msg.setContent(message)
+    msg.setSenderid(currentUser.getId())
+    msg.setTimestamp(new timestamp.Timestamp())
+    request.setMessage(msg)
+    request.setRemoteuserid(remoteUser.getId())
+    grpc.unary(Neptune.SendMessage, {
+      host: "http://localhost:3000",
+      request,
+      metadata: {
+        authorization: accessToken
+      },
+      onEnd: () => {}
+    })
   }
 </script>
 
 <div class="wrapper">
-  <Sidebar FullScreen={isMenuOpened} on:changeActiveChat={changeActiveChat} {userSearchResults} username={currentUser.getUsername()} />
+  <Sidebar FullScreen={isMenuOpened} on:toggleMenu={toggleMenu} on:changeActiveChat={changeActiveChat} {userSearchResults} username={currentUser.getUsername()} />
 
   <main class="main">
-    <ChatContactInfo {remoteUser} on:openMenu={e => (isMenuOpened = true)} />
+    <ChatContactInfo {remoteUser} on:toggleMenu={toggleMenu} />
     <div class="main--chat">
       <!-- TODO: custom scroll -->
       {#if !remoteUser}
@@ -81,9 +105,9 @@
       {:else}
         {#each activeChat.messages as m}
           <ChatMessage
-            Content={m.content}
-            Timestamp={m.timestamp.seconds}
-            Type={m.sender == remoteUser ? 'received' : 'sent'}
+            Content={m.getContent()}
+            Timestamp={m.getTimestamp()}
+            Type={m.getSenderid() == remoteUser.getId() ? 'received' : 'sent'}
           />
         {/each}
       {/if}
