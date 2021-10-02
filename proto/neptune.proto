@@ -15,6 +15,10 @@ service Neptune {
   rpc SendMessage(SendMessageRequest) returns (google.protobuf.Empty) {}
 }
 
+message FindUserByIDRequest {
+  string ID = 1;
+}
+
 message SendMessageRequest {
   string RemoteUserID = 1;
   Message Message = 2;
@@ -60,8 +64,9 @@ message User {
 }
 
 message Chat {
-  repeated string Users = 1;
-  repeated Message Messages = 2;
+  string ID = 1;
+  repeated string Users = 2;
+  repeated Message Messages = 3;
 }
 
 message Message {

@@ -1,20 +1,29 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
+  
+  import type {Chat, User, Message} from '../proto/neptune_pb'
+  import {grpc} from '@improbable-eng/grpc-web'
+
   const dispatch = createEventDispatcher();
   export let activeId;
-  export let chat;
+  export let chat: Chat;
+  export let currentUser: User
+
+  const lastMessage: Message =  chat.getMessagesList()[chat.getMessagesList.length - 1]
+  console.log("last message of chat is")
+  console.log(chat.getMessagesList())
 </script>
 
 <div
-  class="container {activeId == chat?.receiverid && 'active'}"
+  class="container {activeId == chat.getId() && 'active'}"
   on:click={() => dispatch("changeActiveChat", { chat: chat })}
 >
   <img class="contact-image" src="/img2.png" alt="Jane Doe's profile picture" />
   <div class="chatinfo-container">
-    <h3 class="contact-name">{chat?.user}</h3>
-    <p class="message-content">{chat?.message.content}</p>
+    <h3 class="contact-name">{chat.getUsersList().filter(u => u !== currentUser.getId())}</h3>
+    <p class="message-content">{lastMessage}</p>
   </div>
-  <p class="message-time">10:54</p>
+  <p class="message-time">10:30</p>
 </div>
 
 <style>

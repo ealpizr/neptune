@@ -160,13 +160,23 @@ func (s *NeptuneService) SendMessage(ctx context.Context, req *pb.SendMessageReq
 		},
 	})
 
-	if ok.MatchedCount == 0 {
-		c.InsertOne(ctx, primitive.M{"users": primitive.A{uID, remoteUserID}, "messages": primitive.A{req.Message}})
-	}
-
 	pck := &pb.Packet{
 		Type:        pb.Type_MESSAGE_ITEM,
 		MessageItem: req.Message,
+	}
+
+	if ok.MatchedCount == 0 {
+		ir, _ := c.InsertOne(ctx, primitive.M{"users": primitive.A{uID, remoteUserID}, "messages": primitive.A{req.Message}})
+		pck = &pb.Packet{
+			Type: pb.Type_CHAT_ITEM,
+			ChatItem: &pb.Chat{
+				ID:    ir.InsertedID.(primitive.ObjectID).Hex(),
+				Users: []string{uID.Hex(), remoteUserID.Hex()},
+				Messages: []*pb.Message{
+					req.Message,
+				},
+			},
+		}
 	}
 
 	ch, online := s.server.Clients[remoteUserID.Hex()]
@@ -175,6 +185,9 @@ func (s *NeptuneService) SendMessage(ctx context.Context, req *pb.SendMessageReq
 	}
 
 	s.server.Clients[uID.Hex()] <- pck
+
+	log.Println("packet sent was")
+	log.Println(pck)
 
 	return &empty.Empty{}, nil
 }

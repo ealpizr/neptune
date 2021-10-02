@@ -182,6 +182,9 @@ export namespace User {
 }
 
 export class Chat extends jspb.Message {
+  getId(): string;
+  setId(value: string): void;
+
   clearUsersList(): void;
   getUsersList(): Array<string>;
   setUsersList(value: Array<string>): void;
@@ -204,6 +207,7 @@ export class Chat extends jspb.Message {
 
 export namespace Chat {
   export type AsObject = {
+    id: string,
     usersList: Array<string>,
     messagesList: Array<Message.AsObject>,
   }

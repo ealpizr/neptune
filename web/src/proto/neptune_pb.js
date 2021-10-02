@@ -1463,7 +1463,7 @@ proto.neptune.User.prototype.setUsername = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.neptune.Chat.repeatedFields_ = [1,2];
+proto.neptune.Chat.repeatedFields_ = [2,3];
 
 
 
@@ -1496,7 +1496,8 @@ proto.neptune.Chat.prototype.toObject = function(opt_includeInstance) {
  */
 proto.neptune.Chat.toObject = function(includeInstance, msg) {
   var f, obj = {
-    usersList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f,
+    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    usersList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f,
     messagesList: jspb.Message.toObjectList(msg.getMessagesList(),
     proto.neptune.Message.toObject, includeInstance)
   };
@@ -1537,9 +1538,13 @@ proto.neptune.Chat.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.addUsers(value);
+      msg.setId(value);
       break;
     case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addUsers(value);
+      break;
+    case 3:
       var value = new proto.neptune.Message;
       reader.readMessage(value,proto.neptune.Message.deserializeBinaryFromReader);
       msg.addMessages(value);
@@ -1573,17 +1578,24 @@ proto.neptune.Chat.prototype.serializeBinary = function() {
  */
 proto.neptune.Chat.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getUsersList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      1,
+      2,
       f
     );
   }
   f = message.getMessagesList();
   if (f.length > 0) {
     writer.writeRepeatedMessage(
-      2,
+      3,
       f,
       proto.neptune.Message.serializeBinaryToWriter
     );
@@ -1592,11 +1604,29 @@ proto.neptune.Chat.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * repeated string Users = 1;
+ * optional string ID = 1;
+ * @return {string}
+ */
+proto.neptune.Chat.prototype.getId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.neptune.Chat} returns this
+ */
+proto.neptune.Chat.prototype.setId = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * repeated string Users = 2;
  * @return {!Array<string>}
  */
 proto.neptune.Chat.prototype.getUsersList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 2));
 };
 
 
@@ -1605,7 +1635,7 @@ proto.neptune.Chat.prototype.getUsersList = function() {
  * @return {!proto.neptune.Chat} returns this
  */
 proto.neptune.Chat.prototype.setUsersList = function(value) {
-  return jspb.Message.setField(this, 1, value || []);
+  return jspb.Message.setField(this, 2, value || []);
 };
 
 
@@ -1615,7 +1645,7 @@ proto.neptune.Chat.prototype.setUsersList = function(value) {
  * @return {!proto.neptune.Chat} returns this
  */
 proto.neptune.Chat.prototype.addUsers = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 1, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
 };
 
 
@@ -1629,12 +1659,12 @@ proto.neptune.Chat.prototype.clearUsersList = function() {
 
 
 /**
- * repeated Message Messages = 2;
+ * repeated Message Messages = 3;
  * @return {!Array<!proto.neptune.Message>}
  */
 proto.neptune.Chat.prototype.getMessagesList = function() {
   return /** @type{!Array<!proto.neptune.Message>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.neptune.Message, 2));
+    jspb.Message.getRepeatedWrapperField(this, proto.neptune.Message, 3));
 };
 
 
@@ -1643,7 +1673,7 @@ proto.neptune.Chat.prototype.getMessagesList = function() {
  * @return {!proto.neptune.Chat} returns this
 */
 proto.neptune.Chat.prototype.setMessagesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
 };
 
 
@@ -1653,7 +1683,7 @@ proto.neptune.Chat.prototype.setMessagesList = function(value) {
  * @return {!proto.neptune.Message}
  */
 proto.neptune.Chat.prototype.addMessages = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.neptune.Message, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.neptune.Message, opt_index);
 };
 
 

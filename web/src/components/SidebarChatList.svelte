@@ -1,15 +1,18 @@
-<script>
+<script lang="ts">
   import ChatListItem from './ChatListItem.svelte'
   import StartConversation from './StartConversation.svelte'
   import {createEventDispatcher} from 'svelte'
 
   import {grpc} from "@improbable-eng/grpc-web"
-  import {FindUserByUsernameRequest, User} from '../proto/neptune_pb'
+  import {FindUserByUsernameRequest, Chat} from '../proto/neptune_pb'
   import {Neptune} from '../proto/neptune_pb_service'
 
-  export let chats = []
+  import cfg from '../../config.json'
+
+  export let chats: Array<Chat>
   export let activeId
   export let userSearchResults
+  export let currentUser
 
   let searchDelay
   let searchInputValue = ''
@@ -22,7 +25,7 @@
       const request = new FindUserByUsernameRequest()
       request.setUsername(searchInputValue)
       grpc.unary(Neptune.FindUserByUsername, {
-        host: "http://localhost:3000",
+        host: cfg.serverUrl,
         request,
         metadata: {
           authorization: window.sessionStorage.getItem("accessToken")
@@ -59,7 +62,7 @@
   {/if}
 
   {#each chats as c}
-    <ChatListItem chat={c} {activeId} on:changeActiveChat />
+    <ChatListItem {currentUser} chat={c} {activeId} on:changeActiveChat />
   {/each}
 
   {#if chats.length == 0 && !searchInputValue}

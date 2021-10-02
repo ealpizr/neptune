@@ -10,6 +10,8 @@
   import { SignUpRequest, SignUpResponse } from './proto/auth_pb'
   import type { UnaryOutput } from '@improbable-eng/grpc-web/dist/typings/unary'
 
+  import cfg from '../config.json'
+
   const navigate = useNavigate()
   let [email, username, password, passwordConfirmation, error] = [
     '',
@@ -48,7 +50,7 @@
     request.setPassword(password)
 
     grpc.unary(Auth.SignUp, {
-      host: 'http://localhost:3000',
+      host: cfg.serverUrl,
       request,
       onEnd: (r: UnaryOutput<SignUpResponse>) => {
         if (r.status != grpc.Code.OK) {

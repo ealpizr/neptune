@@ -6,10 +6,12 @@
   import { useNavigate } from 'svelte-navigator'
 
   import { grpc } from '@improbable-eng/grpc-web'
-  import { Packet, Type, User, SendMessageRequest, Message } from './proto/neptune_pb'
+  import { Packet, Type, User, SendMessageRequest, Message, Chat } from './proto/neptune_pb'
   import { Neptune } from './proto/neptune_pb_service'
   import pb from 'google-protobuf/google/protobuf/empty_pb'
   import timestamp from 'google-protobuf/google/protobuf/timestamp_pb'
+
+  import cfg from '../config.json'
 
   const navigate = useNavigate()
   let isMenuOpened = false
@@ -22,6 +24,7 @@
   let activeChat: { messages: Array<Message> } = { messages: [] }
 
   let userSearchResults: Array<User> = []
+  let chats: Array<Chat> = []
 
   onMount(async () => {
     if (!refreshToken) {
@@ -29,7 +32,7 @@
     }
 
     grpc.invoke(Neptune.Connect, {
-      host: 'http://localhost:3000',
+      host: cfg.serverUrl,
       request: new pb.Empty(),
       metadata: { authorization: accessToken },
       onMessage: (p: Packet) => {
@@ -46,6 +49,11 @@
             activeChat.messages.push(p.getMessageitem())
             activeChat = activeChat
             break
+          case Type.CHAT_ITEM:
+            console.log(`chat item received: data ${p.getChatitem()}`)
+            chats.push(p.getChatitem())
+            chats = chats
+            break
         }
       },
       onEnd: (code: grpc.Code, message: string) => {
@@ -54,7 +62,7 @@
     })
 
     grpc.unary(Neptune.GetCurrentUser, {
-      host: 'http://localhost:3000',
+      host: cfg.serverUrl,
       request: new pb.Empty(),
       metadata: {
         authorization: accessToken,
@@ -83,18 +91,20 @@
     request.setMessage(msg)
     request.setRemoteuserid(remoteUser.getId())
     grpc.unary(Neptune.SendMessage, {
-      host: "http://localhost:3000",
+      host: cfg.serverUrl,
       request,
       metadata: {
         authorization: accessToken
       },
-      onEnd: () => {}
+      onEnd: () => {
+        message = ""
+      }
     })
   }
 </script>
 
 <div class="wrapper">
-  <Sidebar FullScreen={isMenuOpened} on:toggleMenu={toggleMenu} on:changeActiveChat={changeActiveChat} {userSearchResults} username={currentUser.getUsername()} />
+  <Sidebar FullScreen={isMenuOpened} {currentUser} {chats} on:toggleMenu={toggleMenu} on:changeActiveChat={changeActiveChat} {userSearchResults} username={currentUser.getUsername()} />
 
   <main class="main">
     <ChatContactInfo {remoteUser} on:toggleMenu={toggleMenu} />

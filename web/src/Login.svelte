@@ -9,6 +9,8 @@
   import { LoginRequest, LoginResponse } from './proto/auth_pb'
   import type { UnaryOutput } from '@improbable-eng/grpc-web/dist/typings/unary'
 
+  import cfg from '../config.json'
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -32,7 +34,7 @@
     request.setPassword(password)
 
     grpc.unary(Auth.Login, {
-      host: 'http://localhost:3000',
+      host: cfg.serverUrl,
       request,
       onEnd: (r: UnaryOutput<LoginResponse>) => {
         if (r.status != grpc.Code.OK) {
