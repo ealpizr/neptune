@@ -154,7 +154,26 @@ func (s *NeptuneService) SendMessage(ctx context.Context, req *pb.SendMessageReq
 	uID, _ := primitive.ObjectIDFromHex(md.Get("userID")[0])
 	remoteUserID, _ := primitive.ObjectIDFromHex(req.RemoteUserID)
 
-	ok, _ := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{uID, remoteUserID}}}, bson.M{
+	userStruct := struct {
+		ID       string `bson:"_id"`
+		Username string
+	}{}
+
+	s.server.DB.Collection("users").FindOne(ctx, bson.M{"_id": uID}).Decode(&userStruct)
+
+	user := &pb.User{
+		ID:       userStruct.ID,
+		Username: userStruct.Username,
+	}
+
+	s.server.DB.Collection("users").FindOne(ctx, bson.M{"_id": remoteUserID}).Decode(&userStruct)
+
+	remoteUser := &pb.User{
+		ID:       userStruct.ID,
+		Username: userStruct.Username,
+	}
+
+	ok, _ := c.UpdateOne(ctx, primitive.M{"users": primitive.M{"$all": primitive.A{bson.M{"id": uID, "username": user.Username}, bson.M{"id": remoteUserID, "username": remoteUser.Username}}}}, bson.M{
 		"$push": bson.M{
 			"messages": req.Message,
 		},
@@ -166,7 +185,7 @@ func (s *NeptuneService) SendMessage(ctx context.Context, req *pb.SendMessageReq
 	}
 
 	if ok.MatchedCount == 0 {
-		ir, _ := c.InsertOne(ctx, primitive.M{"users": primitive.A{uID, remoteUserID}, "messages": primitive.A{req.Message}})
+		ir, _ := c.InsertOne(ctx, primitive.M{"users": primitive.A{bson.M{"id": uID, "username": user.Username}, bson.M{"id": remoteUserID, "username": remoteUser.Username}}, "messages": primitive.A{req.Message}})
 		pck = &pb.Packet{
 			Type: pb.Type_CHAT_ITEM,
 			ChatItem: &pb.Chat{
